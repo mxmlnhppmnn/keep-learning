@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="de"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <meta charset="UTF-8">
+    <title layout:title-pattern="$CONTENT_TITLE - Meine App">Meine App</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/app.css}" rel="stylesheet">
+
+
+</head>
+
+<body class="bg-light">
+
+<header class="bg-white border-bottom py-2">
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+
+        <!-- Logo links -->
+        <div class="d-flex align-items-center">
+            <a th:href="@{/}" class="brand-link">
+                <img th:src="@{/images/cat_icon.jpg}" alt="Logo" width="40" class="me-2">
+                <span class="fw-bold fs-4">keep learning</span>
+            </a>
+        </div>
+
+        <!-- Search mittig -->
+        <form class="flex-grow-1 px-4">
+            <input type="text" class="form-control" placeholder="Finde die perfekte Nachhilfe...">
+        </form>
+
+        <!-- Buttons rechts -->
+        <div class="d-flex align-items-center">
+            <a th:href="@{/login}" class="btn btn-outline-primary me-2">Einloggen</a>
+            <a th:href="@{/register}" class="btn btn-primary">Registrieren</a>
+        </div>
+
+    </div>
+</header>
+
+<div class="container-fluid">
+    <div class="row layout-body">
+
+        <!-- Sidebar links -->
+        <nav class="col-2 bg-white border-end py-3">
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link" th:href="@{/}">Startseite</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/}">Nachhilfe</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/}">Lerngruppen</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/}">Über</a></li>
+            </ul>
+        </nav>
+
+        <!-- Seiteninhalt -->
+        <main class="col-10 py-4" layout:fragment="content">
+            <!-- Hier wird der Inhalt eingefügt -->
+        </main>
+
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,9 @@
+
+.layout-body {
+    min-height: calc(100vh - 70px);
+}
+
+.brand-link {
+    text-decoration: none;
+    color:inherit;
+}
