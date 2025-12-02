@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="de"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<main layout:fragment="content">
+    <h1 class="mb-4">Alle Anzeigen</h1>
+    <p th:if="${suchbegriff}">
+        Suchergebnisse für "<span th:text="${suchbegriff}"></span>"
+    </p>
+    <div th:if="${anzeigen.isEmpty()}">
+        <p>Keine Anzeigen gefunden.</p>
+    </div>
+
+    <div th:each="anzeige : ${anzeigen}">
+        <a th:href="@{/anzeigen/{id}(id=${anzeige.anzeigeId})}">
+            <h3 th:text="${anzeige.titel}"></h3>
+        </a>
+        <p th:text="${anzeige.beschreibung}"></p>
+        <p><strong>Preis:</strong> <span th:text="${anzeige.preis}"></span> €</p>
+        <hr>
+    </div>
+
+</main>
+
+</html>

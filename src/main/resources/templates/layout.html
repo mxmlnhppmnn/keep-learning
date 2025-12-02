@@ -26,8 +26,12 @@
         </div>
 
         <!-- Search mittig -->
-        <form class="flex-grow-1 px-4">
-            <input type="text" class="form-control" placeholder="Finde die perfekte Nachhilfe...">
+        <form th:action="@{/anzeigen/suche}" method="get" class="flex-grow-1 px-4">
+            <input type="text"
+                   name="q"
+                   class="form-control"
+                   placeholder="Finde die perfekte Nachhilfe..."
+                   th:value="${suchbegriff}">
         </form>
 
         <!-- Buttons rechts -->

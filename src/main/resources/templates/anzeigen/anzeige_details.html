@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="de"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<body>
+<main layout:fragment="content">
+
+    <h1 th:text="${anzeige.titel}" class="mb-3"></h1>
+
+    <p>
+        <strong>Fach:</strong>
+        <span th:text="${anzeige.fach}"></span>
+    </p>
+
+    <p>
+        <strong>Schulart:</strong>
+        <span th:text="${anzeige.schulart}"></span>
+    </p>
+
+    <p>
+        <strong>Preis:</strong>
+        <span th:text="${anzeige.preis}"></span> €/h
+    </p>
+
+    <hr>
+
+    <p th:text="${anzeige.beschreibung}"></p>
+
+    <div th:if="${istErsteller}">
+        <a th:href="@{'/anzeigen/bearbeiten/' + ${anzeige.anzeigeId}}" class = "btn btn-warning">
+            Bearbeiten
+        </a>
+    </div>
+
+    <a th:href="@{/anzeigen}" class="btn btn-secondary mt-3">Zurück zur Übersicht</a>
+
+</main>
+</body>
+</html>

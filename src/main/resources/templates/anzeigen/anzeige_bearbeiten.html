@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="de"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<main layout:fragment="content">
+
+    <h1 class="mb-4">Anzeige bearbeiten</h1>
+
+    <form th:action="@{/anzeigen/bearbeiten/{id}(id=${anzeige.anzeigeId})}"
+          method="post"
+          enctype="multipart/form-data"
+          class="row gy-3">
+
+        <div class="col-12">
+            <label class="form-label fw-semibold">Titel</label>
+            <input type="text"
+                   name="titel"
+                   class="form-control"
+                   th:value="${anzeige.titel}"
+                   required>
+        </div>
+
+        <div class="col-12">
+            <label class="form-label fw-semibold">Beschreibung</label>
+            <textarea name="beschreibung"
+                      class="form-control"
+                      rows="4"
+                      required
+                      th:text="${anzeige.beschreibung}">
+            </textarea>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label fw-semibold">Fach</label>
+            <input type="text"
+                   name="fach"
+                   class="form-control"
+                   th:value="${anzeige.fach}"
+                   required>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label fw-semibold">Schulart</label>
+            <select name="schulart" class="form-select" required>
+                <option th:selected="${anzeige.schulart == 'Grundschule'}">Grundschule</option>
+                <option th:selected="${anzeige.schulart == 'Realschule'}">Realschule</option>
+                <option th:selected="${anzeige.schulart == 'Gymnasium'}">Gymnasium</option>
+                <option th:selected="${anzeige.schulart == 'Universität'}">Universität</option>
+            </select>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label fw-semibold">Preis pro Stunde (€)</label>
+            <input type="number"
+                   name="preis"
+                   class="form-control"
+                   min="1"
+                   step="1"
+                   th:value="${anzeige.preis}"
+                   required>
+        </div>
+
+        <div class="col-12">
+            <label class="form-label fw-semibold">Bild ändern (optional)</label>
+            <input type="file"
+                   name="bild"
+                   class="form-control"
+                   accept="image/*">
+        </div>
+
+        <div class="col-12 mt-3">
+            <button type="submit" class="btn btn-primary">Änderungen speichern</button>
+            <a th:href="@{'/anzeigen/' + ${anzeige.anzeigeId}}"
+               class="btn btn-secondary ms-2">
+                Abbrechen
+            </a>
+            <form th:action="@{/anzeigen/loeschen/{id}(id=${anzeige.anzeigeId})}" method="post" class="ms-2">
+                <button type="submit" class="btn btn-danger">
+                Löschen
+                </button>
+            </form>
+        </div>
+
+
+    </form>
+
+</main>
+</html>

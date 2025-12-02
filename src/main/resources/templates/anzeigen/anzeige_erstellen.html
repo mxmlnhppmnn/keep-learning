@@ -4,10 +4,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 
-<body>   <!-- <- WICHTIG: dieser body muss da sein -->
-
-<main layout:fragment="content" class="col-10 py-4 container mt-4">
-
+<main layout:fragment="content">
 
     <h1 class="mb-4">Neue Nachhilfe-Anzeige erstellen</h1>
 
@@ -15,7 +12,7 @@
 
         <div class="col-12">
             <label class="form-label fw-semibold">Bild hochladen</label>
-            <input type="file" name="bild" class="form-control" accept="image/*" required>
+            <input type="file" name="bild" class="form-control" accept="image/*">
         </div>
 
         <div class="col-12">
@@ -38,12 +35,13 @@
 
         <div class="col-md-6">
             <label class="form-label fw-semibold">Schulart</label>
-            <select name="schulart" class="form-select" required>
-                <option value="" disabled selected>Bitte wählen...</option>
-                <option>Grundschule</option>
-                <option>Realschule</option>
-                <option>Gymnasium</option>
-                <option>Universität</option>
+            <select name="schulartId" class="form-select" required>
+                <option value="" disabled selected>Bitte wählen…</option>
+                <option th:each="s : ${schularten}"
+                        th:value="${s.schulartId}"
+                        th:text="${s.name}">
+                    <!-- Beispiel: value="1", text="Grundschule" -->
+                </option>
             </select>
         </div>
 
@@ -61,7 +59,5 @@
 
     </form>
 
-    </div>
 </main>
-</body>
 </html>
