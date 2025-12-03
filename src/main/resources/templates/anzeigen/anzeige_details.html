@@ -9,6 +9,12 @@
 
     <h1 th:text="${anzeige.titel}" class="mb-3"></h1>
 
+    <img th:if="${anzeige.bildpfad != null}"
+         th:src="@{/images/{file}(file=${anzeige.bildpfad})}"
+         class="img-fluid mb-3 rounded halb-bild"
+         alt="Bild zur Anzeige">
+
+
     <p>
         <strong>Fach:</strong>
         <span th:text="${anzeige.fach}"></span>

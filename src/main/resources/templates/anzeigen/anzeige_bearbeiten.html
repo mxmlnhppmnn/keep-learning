@@ -11,15 +11,14 @@
     <form th:action="@{/anzeigen/bearbeiten/{id}(id=${anzeige.anzeigeId})}"
           method="post"
           enctype="multipart/form-data"
+          id="bearbeitenForm"
           class="row gy-3">
 
         <div class="col-12">
             <label class="form-label fw-semibold">Titel</label>
-            <input type="text"
-                   name="titel"
+            <input type="text" name="titel"
                    class="form-control"
-                   th:value="${anzeige.titel}"
-                   required>
+                   th:value="${anzeige.titel}" required>
         </div>
 
         <div class="col-12">
@@ -28,8 +27,7 @@
                       class="form-control"
                       rows="4"
                       required
-                      th:text="${anzeige.beschreibung}">
-            </textarea>
+                      th:text="${anzeige.beschreibung}"></textarea>
         </div>
 
         <div class="col-md-6">
@@ -37,8 +35,7 @@
             <input type="text"
                    name="fach"
                    class="form-control"
-                   th:value="${anzeige.fach}"
-                   required>
+                   th:value="${anzeige.fach}" required>
         </div>
 
         <div class="col-md-6">
@@ -47,7 +44,6 @@
                 <option th:selected="${anzeige.schulart == 'Grundschule'}">Grundschule</option>
                 <option th:selected="${anzeige.schulart == 'Realschule'}">Realschule</option>
                 <option th:selected="${anzeige.schulart == 'Gymnasium'}">Gymnasium</option>
-                <option th:selected="${anzeige.schulart == 'Universität'}">Universität</option>
             </select>
         </div>
 
@@ -58,33 +54,39 @@
                    class="form-control"
                    min="1"
                    step="1"
-                   th:value="${anzeige.preis}"
-                   required>
+                   th:value="${anzeige.preis}" required>
         </div>
 
         <div class="col-12">
-            <label class="form-label fw-semibold">Bild ändern (optional)</label>
-            <input type="file"
-                   name="bild"
-                   class="form-control"
-                   accept="image/*">
+            <label class="form-label fw-semibold">Bild ändern (optional)(max 5mb)</label>
+            <input type="file" name="bild" class="form-control" accept="image/*">
         </div>
-
-        <div class="col-12 mt-3">
-            <button type="submit" class="btn btn-primary">Änderungen speichern</button>
-            <a th:href="@{'/anzeigen/' + ${anzeige.anzeigeId}}"
-               class="btn btn-secondary ms-2">
-                Abbrechen
-            </a>
-            <form th:action="@{/anzeigen/loeschen/{id}(id=${anzeige.anzeigeId})}" method="post" class="ms-2">
-                <button type="submit" class="btn btn-danger">
-                Löschen
-                </button>
-            </form>
-        </div>
-
 
     </form>
+
+    <!-- hier die knöpfe nebeneinander -->
+    <div class="col-12 mt-3 d-flex align-items-center">
+
+        <button type="submit"
+                form="bearbeitenForm"
+                class="btn btn-primary">
+            Änderungen speichern
+        </button>
+
+
+        <a th:href="@{'/anzeigen/' + ${anzeige.anzeigeId}}"
+           class="btn btn-secondary ms-2">
+            Abbrechen
+        </a>
+
+
+        <form th:action="@{/anzeigen/loeschen/{id}(id=${anzeige.anzeigeId})}"
+              method="post"
+              class="ms-auto">
+            <button type="submit" class="btn btn-danger">Löschen</button>
+        </form>
+
+    </div>
 
 </main>
 </html>

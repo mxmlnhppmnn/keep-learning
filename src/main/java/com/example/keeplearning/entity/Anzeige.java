@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Table(name = "anzeige")  // anzeige (Tabelle) wird erstellt falls nicht vorhanden
 public class Anzeige {
     @Id //primärschlüssel
-    @GeneratedValue(strategy = GenerationType.IDENTITY) //automatische ID-Vergabe
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     private Long anzeigeId;
     private Long lehrerId;

@@ -14,6 +14,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.util.List;
 
@@ -138,7 +144,7 @@ public class AnzeigenController {
             @RequestParam(value = "bild", required = false) MultipartFile bild
     ) {
 
-        // 🔍 Fach suchen oder neu anlegen
+        // Fach suchen/neu anlegen
         Fach fach = fachRepository.findByNameIgnoreCase(fachName)
                 .orElseGet(() -> {
                     Fach neuesFach = new Fach();
@@ -146,26 +152,44 @@ public class AnzeigenController {
                     return fachRepository.save(neuesFach);
                 });
 
-        // 📝 Anzeige erstellen
         Anzeige anzeige = new Anzeige();
         anzeige.setTitel(titel);
         anzeige.setBeschreibung(beschreibung);
         anzeige.setPreis(preis);
-        anzeige.setFach(fach);          // <-- richtige Zuweisung
+        anzeige.setFach(fach);
         Schulart s = schulartRepository.findById(schulartId).orElseThrow();
         anzeige.setSchulart(s);
 
 
-        anzeige.setLehrerId(1L); // TODO: später durch echten Benutzer ersetzen
+        anzeige.setLehrerId(1L); // ändern sobald login feature da ist
 
-        // 📸 Bild optional speichern
+        // Bild upload optional
         if (bild != null && !bild.isEmpty()) {
-            anzeige.setBildpfad(bild.getOriginalFilename());
+
+            //größenlimit
+            if (bild.getSize() > 5 * 1024 * 1024) {
+                throw new IllegalArgumentException("Bild ist zu groß (max. 5 MB erlaubt)");
+            }
+            try {
+                Path uploadDir = Paths.get("src/main/resources/static/images");
+                Files.createDirectories(uploadDir); // erstellt Ordner falls er nicht existiert
+
+                Path ziel = uploadDir.resolve(bild.getOriginalFilename());
+                Files.copy(bild.getInputStream(), ziel, StandardCopyOption.REPLACE_EXISTING);
+
+                anzeige.setBildpfad(bild.getOriginalFilename());
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new RuntimeException("Fehler beim Speichern des Bildes");
+            }
+
         } else {
+            // Kein Bild
             anzeige.setBildpfad(null);
         }
 
-        // 💾 In DB speichern
         anzeigeRepository.save(anzeige);
 
         return "redirect:/anzeigen";
@@ -177,12 +201,34 @@ public class AnzeigenController {
             @PathVariable Long id,
             @RequestParam String titel,
             @RequestParam String beschreibung,
-            @RequestParam Double preis
+            @RequestParam Double preis,
+            @RequestParam(value = "bild", required = false) MultipartFile bild
+
     ){
         Anzeige anzeige = anzeigeRepository.findById(id).orElseThrow();
         anzeige.setTitel(titel);
         anzeige.setBeschreibung(beschreibung);
         anzeige.setPreis(preis);
+        if (bild != null && !bild.isEmpty()) {
+
+            String dateiname = bild.getOriginalFilename();
+            //wohin uploaden
+            Path uploadDir = Paths.get("src/main/resources/static/images/");
+            try {
+                Files.createDirectories(uploadDir);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            Path ziel = uploadDir.resolve(dateiname);
+            try {
+                Files.copy(bild.getInputStream(), ziel, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            anzeige.setBildpfad(dateiname);
+        }
 
         anzeigeRepository.save(anzeige);
         return "redirect:/anzeigen/" + id;

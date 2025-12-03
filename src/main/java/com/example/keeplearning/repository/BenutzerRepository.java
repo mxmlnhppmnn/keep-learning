@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BenutzerRepository extends JpaRepository<Benutzer, Long> {
 
-    // Darauf greifen wir später zu, wenn sich jemand mit Email einloggt
+    // für später, wenn login da ist
     Benutzer findByEmail(String email);
 }

@@ -13,7 +13,7 @@ public class Schulart {
     @Column(name = "Name", nullable = false, unique = true)
     private String name;
 
-    // --- GETTER + SETTER ---
+    // Getter und Setter
 
     public Long getSchulartId() {
         return schulartId;

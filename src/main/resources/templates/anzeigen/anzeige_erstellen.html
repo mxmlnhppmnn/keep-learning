@@ -11,7 +11,7 @@
     <form th:action="@{/anzeigen/neu}" method="post" enctype="multipart/form-data" class="row gy-3">
 
         <div class="col-12">
-            <label class="form-label fw-semibold">Bild hochladen</label>
+            <label class="form-label fw-semibold">Bild hochladen (optional)(max 5mb)</label>
             <input type="file" name="bild" class="form-control" accept="image/*">
         </div>
 
@@ -40,7 +40,7 @@
                 <option th:each="s : ${schularten}"
                         th:value="${s.schulartId}"
                         th:text="${s.name}">
-                    <!-- Beispiel: value="1", text="Grundschule" -->
+                    <!-- werte werden als strings angezeigt (grundschule) aber als ID übergeben -->
                 </option>
             </select>
         </div>
