@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Meine Verfügbarkeit</title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5">
+
+    <h1 class="mb-4">Meine Verfügbarkeit</h1>
+
+    <!-- Formular zur Eingabe -->
+    <div class="card mb-4">
+        <div class="card-header">Verfügbarkeit hinzufügen</div>
+
+        <div class="card-body">
+            <form th:action="@{/lehrer/{id}/verfuegbarkeit(id=${userId})}"
+                  th:object="${form}"
+                  method="post">
+
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="wochentag" class="form-label">Wochentag</label>
+                        <select th:field="*{wochentag}" id="wochentag" class="form-select">
+                            <option value="1">Montag</option>
+                            <option value="2">Dienstag</option>
+                            <option value="3">Mittwoch</option>
+                            <option value="4">Donnerstag</option>
+                            <option value="5">Freitag</option>
+                            <option value="6">Samstag</option>
+                            <option value="7">Sonntag</option>
+                        </select>
+                    </div>
+
+                    <div class="col">
+                        <label for="startZeit" class="form-label">Startzeit</label>
+                        <input type="time" th:field="*{startZeit}" id="startZeit" class="form-control" required>
+                    </div>
+
+                    <div class="col">
+                        <label for="endZeit" class="form-label">Endzeit</label>
+                        <input type="time" th:field="*{endZeit}" id="endZeit" class="form-control" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Hinzufügen</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabelle mit bestehender Verfügbarkeit -->
+    <div class="card">
+        <div class="card-header">Einträge</div>
+
+        <div class="card-body">
+            <table class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Wochentag</th>
+                    <th>Start</th>
+                    <th>Ende</th>
+                    <th>Aktionen</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="v : ${verfuegbarkeitList}">
+                    <td th:text="${v.verfuegbarkeitId}"></td>
+                    <td th:switch="${v.wochentag}">
+                        <span th:case="1">Mo</span>
+                        <span th:case="2">Di</span>
+                        <span th:case="3">Mi</span>
+                        <span th:case="4">Do</span>
+                        <span th:case="5">Fr</span>
+                        <span th:case="6">Sa</span>
+                        <span th:case="7">So</span>
+                        <span th:case="*">?</span>
+                    </td>
+                    <td th:text="${v.startZeit}"></td>
+                    <td th:text="${v.endZeit}"></td>
+                    <p th:text="@{/lehrer/{u}/verfuegbarkeit/delete/{id}(u=${userId}, id=${v.verfuegbarkeitId})}"></p>
+
+                    <td>
+                        <form th:action="@{/lehrer/{u}/verfuegbarkeit/delete/{id}(u=${userId}, id=${v.verfuegbarkeitId})}"
+                              method="post">
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                Löschen
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
