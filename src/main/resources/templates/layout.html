@@ -31,9 +31,13 @@
         </form>
 
         <!-- Buttons rechts -->
-        <div class="d-flex align-items-center">
+        <div sec:authorize="!isAuthenticated()" class="d-flex align-items-center">
             <a th:href="@{/login}" class="btn btn-outline-primary me-2">Einloggen</a>
             <a th:href="@{/register}" class="btn btn-primary">Registrieren</a>
+        </div>
+        <div sec:authorize="isAuthenticated()" class="d-flex align-items-center">
+            <form method="post" th:action="@{/logout}"> <button type="submit" class="btn btn-outline-primary me-2">Logout</button> </form>
+            <a th:href="@{/user}" class="btn btn-primary">Profil</a>
         </div>
 
     </div>

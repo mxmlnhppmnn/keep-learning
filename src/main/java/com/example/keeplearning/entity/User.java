@@ -1,0 +1,67 @@
+package com.example.keeplearning.entity;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "Benutzer")
+public class User implements UserDetails {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+    @Column(unique=true)
+    private String email;
+    private String password;
+    private String role;
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public User() {}
+    public User(String name, String email, String password, String role) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
+    //////////////////////////////////////////////////////////////////////////
+    //// UserDetails implementation
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Set<GrantedAuthority> authorities = new HashSet<>();
+        authorities.add(new Authority(role));
+        return authorities;
+    }
+
+    @Override
+    public String getUsername() {
+        // email as login username
+        return email;
+    }
+
+}

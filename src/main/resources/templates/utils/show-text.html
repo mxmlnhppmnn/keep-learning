@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<main layout:fragment="content">
+    <div th:each="line: ${lines}">
+        <p th:text="${line}"\>
+        </div>
+</main>
+</html>
