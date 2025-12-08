@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<div layout:fragment="content">
+
+    <h2>Buchung bestätigen</h2>
+
+    <p><strong>Anzeige:</strong> <span th:text="${anzeige.titel}"></span></p>
+    <p><strong>Datum:</strong> <span th:text="${date}"></span></p>
+    <p><strong>Uhrzeit:</strong>
+        <span th:text="${start}"></span> –
+        <span th:text="${end}"></span> Uhr
+    </p>
+    <p><strong>Preis:</strong> <span th:text="${anzeige.preis}"></span> €</p>
+
+    <form th:action="@{/buchung/abschliessen}" method="post">
+        <input type="hidden" name="anzeigeId" th:value="${anzeige.anzeigeId}">
+        <input type="hidden" name="date" th:value="${date}">
+        <input type="hidden" name="start" th:value="${start}">
+
+        <button class="btn btn-success">Buchung abschließen</button>
+    </form>
+
+    <a th:href="@{/anzeigen}" class="btn btn-secondary mt-3">Zurück</a>
+
+</div>
+
+</html>

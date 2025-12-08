@@ -7,6 +7,8 @@ import com.example.keeplearning.repository.BenutzerRepository;
 import com.example.keeplearning.entity.Benutzer;
 import com.example.keeplearning.repository.FachRepository;
 import com.example.keeplearning.entity.Fach;
+import com.example.keeplearning.dto.Timeslot;
+import com.example.keeplearning.service.TimeslotService;
 
 import com.example.keeplearning.repository.SchulartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,8 @@ public class AnzeigenController {
     private FachRepository fachRepository;
     @Autowired
     private SchulartRepository schulartRepository;
+    @Autowired
+    private TimeslotService timeslotService;
 
     @GetMapping
     public String anzeigenListe(Model model) {
@@ -80,7 +84,7 @@ public class AnzeigenController {
         //Benutzer user = benutzerRepository.findByEmail(email);
 
 
-        boolean istErsteller = (user.getUserId().equals(anzeige.getLehrerId()));
+        boolean istErsteller = (user.getUserId().equals(anzeige.getUserId()));
 
         model.addAttribute("anzeige", anzeige);
         model.addAttribute("istErsteller", istErsteller);
@@ -110,7 +114,7 @@ public class AnzeigenController {
         }
         //ende des to be änderung
 
-        if (!anzeige.getLehrerId().equals(user.getUserId())){
+        if (!anzeige.getUserId().equals(user.getUserId())){
             return "redirect:/anzeigen";
         }
         model.addAttribute("anzeige", anzeige);
@@ -161,7 +165,7 @@ public class AnzeigenController {
         anzeige.setSchulart(s);
 
 
-        anzeige.setLehrerId(1L); // ändern sobald login feature da ist
+        anzeige.setUserId(1L); // ändern sobald login feature da ist
 
         // Bild upload optional
         if (bild != null && !bild.isEmpty()) {
@@ -248,7 +252,7 @@ public class AnzeigenController {
             user = benutzerRepository.findByEmail("test@test.de");
         }
 
-        if (!anzeige.getLehrerId().equals(user.getUserId())) {
+        if (!anzeige.getUserId().equals(user.getUserId())) {
             return "redirect:/anzeigen";
         }
 
@@ -256,6 +260,24 @@ public class AnzeigenController {
 
         return "redirect:/anzeigen";
     }
+
+    //Anzeige buchen
+    @GetMapping("/{anzeigeId}/buchen")
+    public String showBookingPage(@PathVariable Long anzeigeId, Model model) {
+
+        var anzeige = anzeigeRepository.findById(anzeigeId)
+                .orElseThrow(() -> new IllegalArgumentException("Anzeige nicht gefunden"));
+
+        Long userId = anzeige.getUserId();
+
+        var slots = timeslotService.generateTimeslotsForUser(userId);
+
+        model.addAttribute("anzeige", anzeige);
+        model.addAttribute("slots", slots);
+
+        return "buchung/timeslots";
+    }
+
 
 
 }

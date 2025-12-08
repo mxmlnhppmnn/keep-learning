@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<div layout:fragment="content">
+
+    <div class="row mt-3">
+        <div class="col-md-4" th:each="slot : ${slots}">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title"
+                        th:text="${#temporals.format(slot.date, 'EEEE, dd.MM.yyyy')}"></h5>
+
+                    <p class="card-text">
+                        <span th:text="${slot.start}"></span>
+                        -
+                        <span th:text="${slot.end}"></span> Uhr
+                    </p>
+
+                    <a class="btn btn-primary btn-sm"
+                       th:href="@{/buchung/bestaetigen(
+                                    date=${slot.date},
+                                    start=${slot.start},
+                                    anzeigeId=${anzeige.anzeigeId}
+                                )}">
+                        Diesen Timeslot buchen
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a th:href="@{/anzeigen}" class="btn btn-secondary mt-3">Zurück zur Übersicht</a>
+
+</div>
+
+</html>

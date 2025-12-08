@@ -8,7 +8,7 @@ public class Anzeige {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     private Long anzeigeId;
-    private Long lehrerId;
+    private Long userId;
     private String titel;
     private String beschreibung;
     private Double preis;
@@ -33,12 +33,12 @@ public class Anzeige {
         this.anzeigeId = anzeigeId;
     }
 
-    public Long getLehrerId() {
-        return lehrerId;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setLehrerId(Long lehrerId) {
-        this.lehrerId = lehrerId;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getTitel() {

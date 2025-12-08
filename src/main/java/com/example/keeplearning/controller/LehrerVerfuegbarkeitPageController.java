@@ -1,6 +1,7 @@
 package com.example.keeplearning.controller;
 
 import com.example.keeplearning.dto.VerfuegbarkeitRequest;
+import com.example.keeplearning.dto.VerfuegbarkeitUpdateRequest;
 import com.example.keeplearning.service.LehrerVerfuegbarkeitService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,9 +17,11 @@ public class LehrerVerfuegbarkeitPageController {
     }
 
     @GetMapping
-    public String showPage(@PathVariable Long userId, Model model){
+    public String showPage(@PathVariable Long userId, @RequestParam(required = false) Long edit, Model model){
         model.addAttribute("userId", userId);
         model.addAttribute("verfuegbarkeitList", service.getVerfuegbarkeiten(userId));
+
+        model.addAttribute("editingId", edit);
 
         //Leeres Objekt fürs Formular
         model.addAttribute("form", new VerfuegbarkeitRequest(1, null, null));
@@ -41,4 +44,16 @@ public class LehrerVerfuegbarkeitPageController {
 
         return "redirect:/lehrer/" + userId + "/verfuegbarkeit";
     }
+
+    @PostMapping("/update/{id}")
+    public String updateVerfuegbarkeit(
+            @PathVariable Long userId,
+            @PathVariable Long id,
+            VerfuegbarkeitUpdateRequest request) {
+
+        service.update(userId, id, request);
+
+        return "redirect:/lehrer/" + userId + "/verfuegbarkeit";
+    }
+
 }

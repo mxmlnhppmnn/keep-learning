@@ -3,6 +3,7 @@ package com.example.keeplearning.service;
 import com.example.keeplearning.entity.LehrerVerfuegbarkeit;
 import com.example.keeplearning.repository.LehrerVerfuegbarkeitRepository;
 import com.example.keeplearning.dto.VerfuegbarkeitRequest;
+import com.example.keeplearning.dto.VerfuegbarkeitUpdateRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,5 +40,24 @@ public class LehrerVerfuegbarkeitService {
             throw new RuntimeException("Nur der Eigentümer darf die Verfügbarkeit löschen");
         }
         repo.delete(v);
+    }
+    public LehrerVerfuegbarkeit update(Long userId, Long verfuegbarkeitId, VerfuegbarkeitUpdateRequest request) {
+
+        // Der zu bearbeitende Eintrag
+        LehrerVerfuegbarkeit v = repo.findById(verfuegbarkeitId)
+                .orElseThrow(() -> new RuntimeException("Verfügbarkeit nicht gefunden"));
+
+        // nur der Eigentümer soll die Verfügbarkeiten bearbeiten dürfen
+        if (!v.getUserId().equals(userId)) {
+            throw new RuntimeException("Verfügbarkeit gehört nicht dem Benutzer " + userId);
+        }
+
+        // aktualisieren
+        v.setWochentag(request.wochentag());
+        v.setStartZeit(request.startZeit());
+        v.setEndZeit(request.endZeit());
+
+        // speichern
+        return repo.save(v);
     }
 }
