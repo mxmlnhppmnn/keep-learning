@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<main layout:fragment="content">
+    <h1>Willkommen</h1>
+    <div>
+        <p th:if="${error}" class="text-danger">Benutzer mit dierser Email existiert bereits</p>
+        <form action="#" th:action="@{/register}" th:object="${userInfo}" method="post">
+            <div class="form-group">
+                <input type="radio" th:field="*{role}" id="role-student" value="student" class="form-check-input" required>
+                <label for="role-student">Schüler</label>
+                <input type="radio" th:field="*{role}" id="role-teacher" value="teacher" class="form-check-input" required>
+                <label for="role-teacher">Leherer</label>
+            </div>
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" class="form-control" th:field="*{name}" placeholder="Enter your name" required />
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" class="form-control" th:field="*{email}" placeholder="Enter your email" required />
+            </div>
+            <div class="form-group">
+                <label for="password">Passwort</label>
+                <input type="password" id="password" name="password" class="form-control" th:field="*{password}" placeholder="Enter your password" required />
+            </div>
+            <button type="submit" class="btn btn-primary mt-2">Benutzer Erstellen</button>
+        </form>
+    </div>
+</main>
+</html>
