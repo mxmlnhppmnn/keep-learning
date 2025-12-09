@@ -18,14 +18,30 @@
                         <span th:text="${slot.end}"></span> Uhr
                     </p>
 
-                    <a class="btn btn-primary btn-sm"
-                       th:href="@{/buchung/bestaetigen(
-                                    date=${slot.date},
-                                    start=${slot.start},
-                                    anzeigeId=${anzeige.anzeigeId}
-                                )}">
-                        Diesen Timeslot buchen
-                    </a>
+                    <div class="d-flex gap-2">
+
+                        <!-- Normale Buchung -->
+                        <a class="btn btn-primary btn-sm"
+                           th:href="@{/buchung/bestaetigen(
+                           date=${slot.date},
+                           start=${slot.start},
+                           anzeigeId=${anzeige.anzeigeId},
+                           probe=false
+                           )}">
+                            Buchen
+                        </a>
+
+                        <!-- Probestunde -->
+                        <a class="btn btn-outline-success btn-sm"
+                           th:href="@{/buchung/bestaetigen(
+                           date=${slot.date},
+                           start=${slot.start},
+                           anzeigeId=${anzeige.anzeigeId},
+                           probe=true
+                           )}">
+                            Probestunde buchen
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

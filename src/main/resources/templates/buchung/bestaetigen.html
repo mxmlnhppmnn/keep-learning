@@ -3,28 +3,44 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 
-<div layout:fragment="content">
+<div layout:fragment="content" class="container mt-4">
 
     <h2>Buchung bestätigen</h2>
+    <hr>
 
-    <p><strong>Anzeige:</strong> <span th:text="${anzeige.titel}"></span></p>
-    <p><strong>Datum:</strong> <span th:text="${date}"></span></p>
-    <p><strong>Uhrzeit:</strong>
-        <span th:text="${start}"></span> –
-        <span th:text="${end}"></span> Uhr
-    </p>
-    <p><strong>Preis:</strong> <span th:text="${anzeige.preis}"></span> €</p>
+    <div class="mb-3">
+        <p><strong>Anzeige:</strong> <span th:text="${anzeige.titel}"></span></p>
+        <p><strong>Beschreibung:</strong> <span th:text="${anzeige.beschreibung}"></span></p>
+        <p><strong>Preis:</strong> <span th:text="${anzeige.preis}"></span> €</p>
+    </div>
 
-    <form th:action="@{/buchung/abschliessen}" method="post">
+    <div class="mb-3">
+        <p><strong>Datum:</strong> <span th:text="${date}"></span></p>
+        <p><strong>Uhrzeit:</strong>
+            <span th:text="${start}"></span> – <span th:text="${end}"></span> Uhr
+        </p>
+    </div>
+
+    <div class="mb-3">
+        <p><strong>Art der Buchung:</strong>
+            <span th:text="${probe} ? 'Probestunde' : 'Normale Stunde'"></span>
+        </p>
+    </div>
+
+    <form method="post" th:action="@{/buchung/abschliessen}">
         <input type="hidden" name="anzeigeId" th:value="${anzeige.anzeigeId}">
         <input type="hidden" name="date" th:value="${date}">
         <input type="hidden" name="start" th:value="${start}">
+        <input type="hidden" name="probe" th:value="${probe}">
 
-        <button class="btn btn-success">Buchung abschließen</button>
+        <button class="btn btn-success">
+            Buchung abschließen
+        </button>
     </form>
 
-    <a th:href="@{/anzeigen}" class="btn btn-secondary mt-3">Zurück</a>
+    <a th:href="@{/anzeigen}" class="btn btn-secondary mt-3">Abbrechen</a>
 
 </div>
 
 </html>
+

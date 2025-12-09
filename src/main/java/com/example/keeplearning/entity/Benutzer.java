@@ -18,6 +18,8 @@ public class Benutzer {
 
     private String passwort;
 
+    private String googleRefreshToken;
+
     //Getter und Setter
 
     public Long getUserId() {
@@ -54,5 +56,17 @@ public class Benutzer {
 
     public void setPasswort(String passwort) {
         this.passwort = passwort;
+    }
+
+    public String getGoogleRefreshToken() {
+        return googleRefreshToken;
+    }
+
+    public void setGoogleRefreshToken(String googleRefreshToken) {
+        this.googleRefreshToken = googleRefreshToken;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

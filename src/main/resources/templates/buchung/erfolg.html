@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<div layout:fragment="content" class="container mt-4">
+    <h2>Buchung erfolgreich!</h2>
+    <p>Dein Termin wurde gespeichert.</p>
+
+    <a th:href="@{/anzeigen}" class="btn btn-primary">Zurück zur Übersicht</a>
+</div>
+
+</html>
