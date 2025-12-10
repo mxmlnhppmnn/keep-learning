@@ -8,52 +8,48 @@
 <body>
 <main layout:fragment="content">
 
-    <h1 th:text="${anzeige.titel}" class="mb-3"></h1>
+    <h1 th:text="${advertisement.title}" class="mb-3"></h1>
 
-    <img th:if="${anzeige.bildpfad != null}"
-         th:src="@{/images/{file}(file=${anzeige.bildpfad})}"
+    <img th:if="${advertisement.imagePath != null}"
+         th:src="@{/images/{file}(file=${advertisement.imagePath})}"
          class="img-fluid mb-3 rounded halb-bild"
          alt="Bild zur Anzeige">
 
-
     <p>
         <strong>Fach:</strong>
-        <span th:text="${anzeige.fach}"></span>
+        <span th:text="${advertisement.subject.name}"></span>
     </p>
 
     <p>
         <strong>Schulart:</strong>
-        <span th:text="${anzeige.schulart}"></span>
+        <span th:text="${advertisement.schoolType.name}"></span>
     </p>
 
     <p>
         <strong>Preis:</strong>
-        <span th:text="${anzeige.preis}"></span> €/h
+        <span th:text="${advertisement.price}"></span> €/h
     </p>
 
     <hr>
 
-    <p th:text="${anzeige.beschreibung}"></p>
+    <p th:text="${advertisement.description}"></p>
 
     <div class="d-flex gap-2">
 
         <!-- Bearbeiten nur für Ersteller -->
         <a th:if="${istErsteller}"
-           th:href="@{'/anzeigen/bearbeiten/' + ${anzeige.anzeigeId}}"
+           th:href="@{'/anzeigen/bearbeiten/' + ${advertisement.id}}"
            class="btn btn-warning">
             Bearbeiten
         </a>
 
-        <!-- Buchen nur für Schüler -->
-        <!--<a th:if="${user.rolle == 'SCHUELER'}"-->
-        <!--<a th:if="${!istErsteller}"-->
-        <a
-           th:href="@{/anzeigen/{id}/buchen(id=${anzeige.anzeigeId})}"
+        <!-- Buchen -->
+        <a th:href="@{/anzeigen/{id}/buchen(id=${advertisement.id})}"
            class="btn btn-primary">
             Buchen
         </a>
 
-        <!-- Zurück immer sichtbar, inline daneben -->
+        <!-- Zurück -->
         <a th:href="@{/anzeigen}"
            class="btn btn-secondary">
             Zurück zur Übersicht

@@ -9,6 +9,7 @@
         <div class="col-md-4" th:each="slot : ${slots}">
             <div class="card mb-3">
                 <div class="card-body">
+
                     <h5 class="card-title"
                         th:text="${#temporals.format(slot.date, 'EEEE, dd.MM.yyyy')}"></h5>
 
@@ -22,25 +23,16 @@
 
                         <!-- Normale Buchung -->
                         <a class="btn btn-primary btn-sm"
-                           th:href="@{/buchung/bestaetigen(
-                           date=${slot.date},
-                           start=${slot.start},
-                           anzeigeId=${anzeige.anzeigeId},
-                           probe=false
-                           )}">
+                           th:href="@{/buchung/bestaetigen(advertisementId=${anzeige.id}, date=${slot.date}, start=${slot.start}, trialLesson=false)}">
                             Buchen
                         </a>
 
                         <!-- Probestunde -->
                         <a class="btn btn-outline-success btn-sm"
-                           th:href="@{/buchung/bestaetigen(
-                           date=${slot.date},
-                           start=${slot.start},
-                           anzeigeId=${anzeige.anzeigeId},
-                           probe=true
-                           )}">
+                           th:href="@{/buchung/bestaetigen(advertisementId=${anzeige.id}, date=${slot.date}, start=${slot.start}, trialLesson=true)}">
                             Probestunde buchen
                         </a>
+
                     </div>
                 </div>
             </div>

@@ -9,7 +9,7 @@
 
     <h1 class="mb-4">Anzeige bearbeiten</h1>
 
-    <form th:action="@{/anzeigen/bearbeiten/{id}(id=${anzeige.anzeigeId})}"
+    <form th:action="@{/anzeigen/bearbeiten/{id}(id=${advertisement.id})}"
           method="post"
           enctype="multipart/form-data"
           id="bearbeitenForm"
@@ -19,7 +19,7 @@
             <label class="form-label fw-semibold">Titel</label>
             <input type="text" name="titel"
                    class="form-control"
-                   th:value="${anzeige.titel}" required>
+                   th:value="${advertisement.title}" required>
         </div>
 
         <div class="col-12">
@@ -28,23 +28,23 @@
                       class="form-control"
                       rows="4"
                       required
-                      th:text="${anzeige.beschreibung}"></textarea>
+                      th:text="${advertisement.description}"></textarea>
         </div>
 
         <div class="col-md-6">
             <label class="form-label fw-semibold">Fach</label>
             <input type="text"
-                   name="fach"
+                   name="subject"
                    class="form-control"
-                   th:value="${anzeige.fach}" required>
+                   th:value="${advertisement.subject.name}" required>
         </div>
 
         <div class="col-md-6">
             <label class="form-label fw-semibold">Schulart</label>
-            <select name="schulart" class="form-select" required>
-                <option th:selected="${anzeige.schulart == 'Grundschule'}">Grundschule</option>
-                <option th:selected="${anzeige.schulart == 'Realschule'}">Realschule</option>
-                <option th:selected="${anzeige.schulart == 'Gymnasium'}">Gymnasium</option>
+            <select name="schoolType" class="form-select" required>
+                <option th:selected="${advertisement.schoolType.name == 'Grundschule'}">Grundschule</option>
+                <option th:selected="${advertisement.schoolType.name == 'Realschule'}">Realschule</option>
+                <option th:selected="${advertisement.schoolType.name == 'Gymnasium'}">Gymnasium</option>
             </select>
         </div>
 
@@ -55,7 +55,7 @@
                    class="form-control"
                    min="1"
                    step="1"
-                   th:value="${anzeige.preis}" required>
+                   th:value="${advertisement.price}" required>
         </div>
 
         <div class="col-12">
@@ -65,7 +65,6 @@
 
     </form>
 
-    <!-- hier die knöpfe nebeneinander -->
     <div class="col-12 mt-3 d-flex align-items-center">
 
         <button type="submit"
@@ -74,14 +73,12 @@
             Änderungen speichern
         </button>
 
-
-        <a th:href="@{'/anzeigen/' + ${anzeige.anzeigeId}}"
+        <a th:href="@{'/anzeigen/' + ${advertisement.id}}"
            class="btn btn-secondary ms-2">
             Abbrechen
         </a>
 
-
-        <form th:action="@{/anzeigen/loeschen/{id}(id=${anzeige.anzeigeId})}"
+        <form th:action="@{/anzeigen/loeschen/{id}(id=${advertisement.id})}"
               method="post"
               class="ms-auto">
             <button type="submit" class="btn btn-danger">Löschen</button>

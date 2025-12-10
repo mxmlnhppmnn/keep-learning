@@ -1,35 +1,35 @@
 package com.example.keeplearning.controller;
 
-import com.example.keeplearning.dto.VerfuegbarkeitRequest;
-import com.example.keeplearning.dto.VerfuegbarkeitUpdateRequest;
-import com.example.keeplearning.service.LehrerVerfuegbarkeitService;
+import com.example.keeplearning.dto.AvailabilityRequest;
+import com.example.keeplearning.dto.AvailabilityUpdateRequest;
+import com.example.keeplearning.service.TeacherAvailabilityService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/lehrer/{userId}/verfuegbarkeit")
-public class LehrerVerfuegbarkeitPageController {
-    private final LehrerVerfuegbarkeitService service;
+public class TeacherAvailabilityPageController {
+    private final TeacherAvailabilityService service;
 
-    public LehrerVerfuegbarkeitPageController(LehrerVerfuegbarkeitService service){
+    public TeacherAvailabilityPageController(TeacherAvailabilityService service){
         this.service = service;
     }
 
     @GetMapping
     public String showPage(@PathVariable Long userId, @RequestParam(required = false) Long edit, Model model){
         model.addAttribute("userId", userId);
-        model.addAttribute("verfuegbarkeitList", service.getVerfuegbarkeiten(userId));
+        model.addAttribute("verfuegbarkeitList", service.getAvailabilities(userId));
 
         model.addAttribute("editingId", edit);
 
         //Leeres Objekt fürs Formular
-        model.addAttribute("form", new VerfuegbarkeitRequest(1, null, null));
+        model.addAttribute("form", new AvailabilityRequest(1, null, null));
         return "verfuegbarkeit";
     }
 
     @PostMapping
-    public String createVerfuegbarkeit(@PathVariable Long userId, @ModelAttribute("form") VerfuegbarkeitRequest request){
+    public String createVerfuegbarkeit(@PathVariable Long userId, @ModelAttribute("form") AvailabilityRequest request){
         service.create(userId, request);
 
         return "redirect:/lehrer/" + userId + "/verfuegbarkeit";
@@ -49,7 +49,7 @@ public class LehrerVerfuegbarkeitPageController {
     public String updateVerfuegbarkeit(
             @PathVariable Long userId,
             @PathVariable Long id,
-            VerfuegbarkeitUpdateRequest request) {
+            AvailabilityUpdateRequest request) {
 
         service.update(userId, id, request);
 

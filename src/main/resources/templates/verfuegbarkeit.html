@@ -20,7 +20,7 @@
                 <div class="row mb-3">
                     <div class="col">
                         <label for="wochentag" class="form-label">Wochentag</label>
-                        <select th:field="*{wochentag}" id="wochentag" class="form-select">
+                        <select th:field="*{weekday}" id="wochentag" class="form-select">
                             <option value="1">Montag</option>
                             <option value="2">Dienstag</option>
                             <option value="3">Mittwoch</option>
@@ -33,12 +33,12 @@
 
                     <div class="col">
                         <label for="startZeit" class="form-label">Startzeit</label>
-                        <input type="time" th:field="*{startZeit}" id="startZeit" class="form-control" required>
+                        <input type="time" th:field="*{startTime}" id="startZeit" class="form-control" required>
                     </div>
 
                     <div class="col">
                         <label for="endZeit" class="form-label">Endzeit</label>
-                        <input type="time" th:field="*{endZeit}" id="endZeit" class="form-control" required>
+                        <input type="time" th:field="*{endTime}" id="endZeit" class="form-control" required>
                     </div>
                 </div>
 
@@ -65,8 +65,8 @@
 
                 <tbody>
                 <tr th:each="v : ${verfuegbarkeitList}">
-                    <td th:text="${v.verfuegbarkeitId}"></td>
-                    <td th:switch="${v.wochentag}">
+                    <td th:text="${v.id}"></td>
+                    <td th:switch="${v.weekday}">
                         <span th:case="1">Mo</span>
                         <span th:case="2">Di</span>
                         <span th:case="3">Mi</span>
@@ -76,10 +76,10 @@
                         <span th:case="7">So</span>
                         <span th:case="*">?</span>
                     </td>
-                    <td th:text="${v.startZeit}"></td>
-                    <td th:text="${v.endZeit}"></td>
+                    <td th:text="${v.startTime}"></td>
+                    <td th:text="${v.endTime}"></td>
                     <td>
-                        <form th:action="@{/lehrer/{u}/verfuegbarkeit/delete/{id}(u=${userId}, id=${v.verfuegbarkeitId})}"
+                        <form th:action="@{/lehrer/{u}/verfuegbarkeit/delete/{id}(u=${userId}, id=${v.id})}"
                               method="post" class="d-inline">
                             <button type="submit" class="btn btn-danger btn-sm">
                                 Löschen
@@ -87,15 +87,15 @@
                         </form>
                         <form th:action="@{/lehrer/{u}/verfuegbarkeit(u=${userId})}"
                               method="get" class="d-inline">
-                            <input type="hidden" name="edit" th:value="${v.verfuegbarkeitId}" />
+                            <input type="hidden" name="edit" th:value="${v.id}" />
                             <button type="submit" class="btn btn-warning btn-sm">Bearbeiten</button>
                         </form>
 
                     </td>
                 </tr>
-                <tr th:each="v : ${verfuegbarkeitList}" th:if="${editingId == v.verfuegbarkeitId}">
+                <tr th:each="v : ${verfuegbarkeitList}" th:if="${editingId == v.id}">
                     <td colspan="5">
-                        <form th:action="@{/lehrer/{u}/verfuegbarkeit/update/{id}(u=${userId}, id=${v.verfuegbarkeitId})}"
+                        <form th:action="@{/lehrer/{u}/verfuegbarkeit/update/{id}(u=${userId}, id=${v.id})}"
                               method="post">
 
                             <div class="row">
@@ -114,12 +114,12 @@
 
                                 <div class="col">
                                     <label class="form-label">Startzeit</label>
-                                    <input type="time" name="startZeit" th:value="${v.startZeit}" class="form-control">
+                                    <input type="time" name="startZeit" th:value="${v.startTime}" class="form-control">
                                 </div>
 
                                 <div class="col">
                                     <label class="form-label">Endzeit</label>
-                                    <input type="time" name="endZeit" th:value="${v.endZeit}" class="form-control">
+                                    <input type="time" name="endZeit" th:value="${v.endTime}" class="form-control">
                                 </div>
 
                                 <div class="col">

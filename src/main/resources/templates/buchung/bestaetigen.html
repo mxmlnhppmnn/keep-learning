@@ -9,9 +9,9 @@
     <hr>
 
     <div class="mb-3">
-        <p><strong>Anzeige:</strong> <span th:text="${anzeige.titel}"></span></p>
-        <p><strong>Beschreibung:</strong> <span th:text="${anzeige.beschreibung}"></span></p>
-        <p><strong>Preis:</strong> <span th:text="${anzeige.preis}"></span> €</p>
+        <p><strong>Anzeige:</strong> <span th:text="${advertisement.titel}"></span></p>
+        <p><strong>Beschreibung:</strong> <span th:text="${advertisement.beschreibung}"></span></p>
+        <p><strong>Preis:</strong> <span th:text="${advertisement.preis}"></span> €</p>
     </div>
 
     <div class="mb-3">
@@ -28,7 +28,7 @@
     </div>
 
     <form method="post" th:action="@{/buchung/abschliessen}">
-        <input type="hidden" name="anzeigeId" th:value="${anzeige.anzeigeId}">
+        <input type="hidden" name="anzeigeId" th:value="${advertisement.anzeigeId}">
         <input type="hidden" name="date" th:value="${date}">
         <input type="hidden" name="start" th:value="${start}">
         <input type="hidden" name="probe" th:value="${probe}">

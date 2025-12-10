@@ -1,8 +1,8 @@
 package com.example.keeplearning.service;
 
 import com.example.keeplearning.dto.Timeslot;
-import com.example.keeplearning.entity.LehrerVerfuegbarkeit;
-import com.example.keeplearning.repository.TerminRepository;
+import com.example.keeplearning.entity.TeacherAvailability;
+import com.example.keeplearning.repository.LessonRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -13,31 +13,31 @@ import java.util.List;
 @Service
 public class TimeslotService {
 
-    private final LehrerVerfuegbarkeitService verfService;
-    private final TerminRepository terminRepository;
+    private final TeacherAvailabilityService verfService;
+    private final LessonRepository lessonRepository;
 
-    public TimeslotService(LehrerVerfuegbarkeitService verfService, TerminRepository terminRepository) {
+    public TimeslotService(TeacherAvailabilityService verfService, LessonRepository lessonRepository) {
         this.verfService = verfService;
-        this.terminRepository = terminRepository;
+        this.lessonRepository = lessonRepository;
     }
 
     public List<Timeslot> generateTimeslotsForUser(Long userId) {
 
         // Alle Verfügbarkeiten des Lehrers laden
-        List<LehrerVerfuegbarkeit> verfList = verfService.getVerfuegbarkeiten(userId);
+        List<TeacherAvailability> verfList = verfService.getAvailabilities(userId);
         List<Timeslot> result = new ArrayList<>();
 
         // Debug
         System.out.println("DEBUG: Verfügbarkeiten für userId=" + userId);
         System.out.println("DEBUG: Anzahl=" + verfList.size());
-        for (LehrerVerfuegbarkeit v : verfList) {
+        for (TeacherAvailability v : verfList) {
             System.out.println(
-                    "   ID=" + v.getVerfuegbarkeitId() +
-                            " Wochentag=" + v.getWochentag() +
-                            " Start=" + v.getStartZeit() +
-                            " Ende=" + v.getEndZeit() +
-                            " gültigAb=" + v.getGueltigAb() +
-                            " gültigBis=" + v.getGueltigBis()
+                    "   ID=" + v.getId() +
+                            " Wochentag=" + v.getWeekday() +
+                            " Start=" + v.getStartTime() +
+                            " Ende=" + v.getEndTime() +
+                            " gültigAb=" + v.getValidFrom() +
+                            " gültigBis=" + v.getValidUntil()
             );
         }
 
@@ -50,23 +50,23 @@ public class TimeslotService {
 
             int wochentag = date.getDayOfWeek().getValue(); // 1= mo, 2= di, ...
 
-            for (LehrerVerfuegbarkeit v : verfList) {
+            for (TeacherAvailability v : verfList) {
 
-                if (v.getWochentag() != wochentag)
+                if (v.getWeekday() != wochentag)
                     continue;
 
                 // Gültigkeitszeitraum wird später noch ins html getan für z.B. Urlaub
-                if (v.getGueltigAb() != null && date.isBefore(v.getGueltigAb()))
+                if (v.getValidFrom() != null && date.isBefore(v.getValidFrom()))
                     continue;
 
-                if (v.getGueltigBis() != null && date.isAfter(v.getGueltigBis()))
+                if (v.getValidUntil() != null && date.isAfter(v.getValidUntil()))
                     continue;
 
-                LocalTime current = v.getStartZeit();
+                LocalTime current = v.getStartTime();
 
                 // Slots erzeugen, nur freie (nicht-gebuchte) Zeiträume sollen angezeigt werden
-                while (!current.plusMinutes(slotMinutes).isAfter(v.getEndZeit())) {
-                    boolean gebucht = terminRepository.existsTerminForLehrer(userId, date, current);
+                while (!current.plusMinutes(slotMinutes).isAfter(v.getEndTime())) {
+                    boolean gebucht = lessonRepository.existsLessonForTeacher(userId, date, current);
 
                     if (!gebucht) {
                         result.add(new Timeslot(date, current, current.plusMinutes(slotMinutes)));

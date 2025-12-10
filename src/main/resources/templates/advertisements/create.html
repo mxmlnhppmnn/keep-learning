@@ -39,7 +39,7 @@
             <select name="schulartId" class="form-select" required>
                 <option value="" disabled selected>Bitte wählen…</option>
                 <option th:each="s : ${schularten}"
-                        th:value="${s.schulartId}"
+                        th:value="${s.id}"
                         th:text="${s.name}">
                     <!-- werte werden als strings angezeigt (grundschule) aber als ID übergeben -->
                 </option>

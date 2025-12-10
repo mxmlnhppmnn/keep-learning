@@ -3,24 +3,24 @@ package com.example.keeplearning.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "fach")
-public class Fach {
+@Table(name = "subject")
+public class Subject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long fachId;
+    private Long id;
 
     @Column(unique = true, nullable = false)
     private String name;
 
     // Getter und Setter
 
-    public Long getFachId() {
-        return fachId;
+    public Long getId() {
+        return id;
     }
 
-    public void setFachId(Long fachId) {
-        this.fachId = fachId;
+    public void setId(Long subjectId) {
+        this.id = subjectId;
     }
 
     public String getName() {

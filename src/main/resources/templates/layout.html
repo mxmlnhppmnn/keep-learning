@@ -13,6 +13,7 @@
 
 </head>
 
+<!--<body th:with="auth=${#authentication}" class="bg-light">-->
 <body class="bg-light">
 
 <header class="bg-white border-bottom py-2">
@@ -27,7 +28,7 @@
         </div>
 
         <!-- Search mittig -->
-        <form th:action="@{/anzeigen/suche}" method="get" class="flex-grow-1 px-4">
+        <form th:action="@{/templates/advertisements/suche}" method="get" class="flex-grow-1 px-4">
             <input type="text"
                    name="q"
                    class="form-control"
@@ -52,14 +53,19 @@
     <div class="row layout-body">
 
         <!-- Sidebar links -->
-        <nav class="col-2 bg-white border-end py-3">
+        <nav class="col-2 bg-white border-end py-3" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
             <ul class="nav flex-column">
-                <li class="nav-item"><a class="nav-link" th:href="@{/}">Startseite</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/}">Nachhilfe</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/}">Lerngruppen</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/}">Über</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/home}">Startseite</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/anzeigen}">Nachhilfe</a></li>
+
+                <!-- Nur Lehrer -->
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/anzeigen/neu}">Anzeige erstellen</a>
+                </li>
             </ul>
         </nav>
+
+
 
         <!-- Seiteninhalt -->
         <main class="col-10 py-4" layout:fragment="content">
