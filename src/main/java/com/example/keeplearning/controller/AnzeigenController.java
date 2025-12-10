@@ -3,13 +3,11 @@ package com.example.keeplearning.controller;
 import com.example.keeplearning.entity.Schulart;
 import com.example.keeplearning.repository.AnzeigeRepository;
 import com.example.keeplearning.entity.Anzeige;
-import com.example.keeplearning.repository.BenutzerRepository;
-import com.example.keeplearning.entity.Benutzer;
+import com.example.keeplearning.entity.User;
+import com.example.keeplearning.repository.UserRepository;
 import com.example.keeplearning.repository.FachRepository;
 import com.example.keeplearning.entity.Fach;
-import com.example.keeplearning.dto.Timeslot;
 import com.example.keeplearning.service.TimeslotService;
-
 import com.example.keeplearning.repository.SchulartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,19 +23,22 @@ import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.util.List;
 
-
 @Controller
 @RequestMapping("/anzeigen")
 public class AnzeigenController {
 
     @Autowired
     private AnzeigeRepository anzeigeRepository;
+
     @Autowired
-    private BenutzerRepository benutzerRepository;
+    private UserRepository userRepository;
+
     @Autowired
     private FachRepository fachRepository;
+
     @Autowired
     private SchulartRepository schulartRepository;
+
     @Autowired
     private TimeslotService timeslotService;
 
@@ -50,41 +51,28 @@ public class AnzeigenController {
     @GetMapping("/neu")
     public String anzeigenNeuForm(Model model) {
         model.addAttribute("anzeige", new Anzeige());
-        List<Schulart> alleSchularten = schulartRepository.findAll(); //damit die Schularten im Dropdown schon beim 1. Erstellen verfügbar sind
+        List<Schulart> alleSchularten = schulartRepository.findAll(); // Schularten fürs Dropdown
         model.addAttribute("schularten", alleSchularten);
         return "anzeigen/anzeige_erstellen";
     }
-
-    //wenn man auf eine anzeige clickt sieht man auf einer neuen seite alle details und nur die anzeige
-    /*
-    @GetMapping("/details")
-    public String anzeigenDetails() {
-        return "anzeige_details";
-    }*/
 
     @GetMapping("/{id}")
     public String anzeigenDetails(@PathVariable Long id, Model model, Principal principal) {
 
         Anzeige anzeige = anzeigeRepository.findById(id)
-                        .orElseThrow(() -> new RuntimeException("Anzeige wurde nicht gefunden"));
+                .orElseThrow(() -> new RuntimeException("Anzeige wurde nicht gefunden"));
 
-        //aktuellen Benutzer bestimmmen
-        //String email = principal.getName(); //Name ist Einlogname -> Email adresse des nutzers
-        //nur zum testen solange es kein login gibt! Nacher unbedingt ändern !!
+        // aktuellen Benutzer bestimmen (Fake-Login solange kein echtes Login da ist)
         String email;
         if (principal != null) {
             email = principal.getName();
         } else {
-            // Fake-Login für Entwicklungszwecke
             email = "test@test.de";
         }
-        Benutzer user = benutzerRepository.findByEmail(email);
 
-        //ende des to be änderung
-        //Benutzer user = benutzerRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email).orElse(null);
 
-
-        boolean istErsteller = (user.getUserId().equals(anzeige.getUserId()));
+        boolean istErsteller = user != null && user.getId().equals(anzeige.getUserId());
 
         model.addAttribute("anzeige", anzeige);
         model.addAttribute("istErsteller", istErsteller);
@@ -97,37 +85,33 @@ public class AnzeigenController {
         Anzeige anzeige = anzeigeRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("Anzeige wurde nicht gefunden"));
 
-        //Benutzer user = benutzerRepository.findByEmail(principal.getName());
-        //nur zum testen ohne login!! Später unbedingt ändern !!
-        Benutzer user;
-
+        // Nutzer ermitteln (mit Fake-Login fallback)
+        User user;
         if (principal != null) {
-            // echter Login (später)
-            user = benutzerRepository.findByEmail(principal.getName());
+            user = userRepository.findByEmail(principal.getName()).orElse(null);
         } else {
-            // Fake Login: Mock-User aus DB holen
-            user = benutzerRepository.findByEmail("test@test.de");
-
+            user = userRepository.findByEmail("test@test.de").orElse(null);
             if (user == null) {
                 throw new RuntimeException("Mock-Benutzer 'test@test.de' existiert nicht in der Datenbank.");
             }
         }
-        //ende des to be änderung
 
-        if (!anzeige.getUserId().equals(user.getUserId())){
+        if (!anzeige.getUserId().equals(user.getId())){
             return "redirect:/anzeigen";
         }
+
         model.addAttribute("anzeige", anzeige);
         return "anzeigen/anzeige_bearbeiten";
     }
 
     @GetMapping("/suche")
     public String sucheAnzeigen(@RequestParam("q") String query, Model model){
-        //Bei Suche nach nichts alle Anzeigen anzeigen
-        if(query == null || query.trim().isEmpty()){
+        // Bei leerer Suche alle Anzeigen anzeigen
+        if (query == null || query.trim().isEmpty()){
             model.addAttribute("anzeigen", anzeigeRepository.findAll());
             return "anzeigen/anzeigen_liste";
         }
+
         List<Anzeige> ergebnisse = anzeigeRepository.searchAll(query);
 
         model.addAttribute("anzeigen", ergebnisse);
@@ -136,7 +120,7 @@ public class AnzeigenController {
         return "anzeigen/anzeigen_liste";
     }
 
-    //ab hier die PostMappings
+    // ab hier die PostMappings
 
     @PostMapping("/neu")
     public String erstelleAnzeige(
@@ -164,13 +148,12 @@ public class AnzeigenController {
         Schulart s = schulartRepository.findById(schulartId).orElseThrow();
         anzeige.setSchulart(s);
 
-
-        anzeige.setUserId(1L); // ändern sobald login feature da ist
+        anzeige.setUserId(1L); // TODO: ändern, sobald Login-Feature da ist
 
         // Bild upload optional
         if (bild != null && !bild.isEmpty()) {
 
-            //größenlimit
+            // Größenlimit
             if (bild.getSize() > 5 * 1024 * 1024) {
                 throw new IllegalArgumentException("Bild ist zu groß (max. 5 MB erlaubt)");
             }
@@ -182,7 +165,6 @@ public class AnzeigenController {
                 Files.copy(bild.getInputStream(), ziel, StandardCopyOption.REPLACE_EXISTING);
 
                 anzeige.setBildpfad(bild.getOriginalFilename());
-
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -199,7 +181,6 @@ public class AnzeigenController {
         return "redirect:/anzeigen";
     }
 
-
     @PostMapping("/bearbeiten/{id}")
     public String bearbeitenSpeichern(
             @PathVariable Long id,
@@ -213,10 +194,10 @@ public class AnzeigenController {
         anzeige.setTitel(titel);
         anzeige.setBeschreibung(beschreibung);
         anzeige.setPreis(preis);
+
         if (bild != null && !bild.isEmpty()) {
 
             String dateiname = bild.getOriginalFilename();
-            //wohin uploaden
             Path uploadDir = Paths.get("src/main/resources/static/images/");
             try {
                 Files.createDirectories(uploadDir);
@@ -237,22 +218,21 @@ public class AnzeigenController {
         anzeigeRepository.save(anzeige);
         return "redirect:/anzeigen/" + id;
     }
+
     @PostMapping("/loeschen/{id}")
     public String loeschen(@PathVariable Long id, Principal principal) {
 
         Anzeige anzeige = anzeigeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Anzeige nicht gefunden"));
 
-        // ändern sobald das login feature da ist!!
-        //Benutzer user = benutzerRepository.findByEmail(principal.getName());
-        Benutzer user;
+        User user;
         if (principal != null) {
-            user = benutzerRepository.findByEmail(principal.getName());
+            user = userRepository.findByEmail(principal.getName()).orElse(null);
         } else {
-            user = benutzerRepository.findByEmail("test@test.de");
+            user = userRepository.findByEmail("test@test.de").orElse(null);
         }
 
-        if (!anzeige.getUserId().equals(user.getUserId())) {
+        if (user == null || !anzeige.getUserId().equals(user.getId())) {
             return "redirect:/anzeigen";
         }
 
@@ -261,7 +241,7 @@ public class AnzeigenController {
         return "redirect:/anzeigen";
     }
 
-    //Anzeige buchen
+    // Anzeige buchen
     @GetMapping("/{anzeigeId}/buchen")
     public String showBookingPage(@PathVariable Long anzeigeId, Model model) {
 
@@ -277,7 +257,5 @@ public class AnzeigenController {
 
         return "buchung/timeslots";
     }
-
-
 
 }

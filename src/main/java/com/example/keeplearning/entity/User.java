@@ -22,6 +22,7 @@ public class User implements UserDetails {
     private String email;
     private String password;
     private String role;
+    private String googleRefreshToken;
 
     public String getName() {
         return name;
@@ -38,6 +39,22 @@ public class User implements UserDetails {
 
     public String getRole() {
         return role;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getGoogleRefreshToken() {
+        return googleRefreshToken;
+    }
+
+    public void setGoogleRefreshToken(String googleRefreshToken) {
+        this.googleRefreshToken = googleRefreshToken;
     }
 
     public User() {}

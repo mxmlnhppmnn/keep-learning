@@ -1,21 +1,17 @@
 package com.example.keeplearning.controller;
 
 import com.example.keeplearning.entity.Anzeige;
-import com.example.keeplearning.entity.Benutzer;
 import com.example.keeplearning.entity.Termin;
 import com.example.keeplearning.entity.TerminSerie;
+import com.example.keeplearning.entity.User;
 import com.example.keeplearning.repository.AnzeigeRepository;
-import com.example.keeplearning.repository.BenutzerRepository;
 import com.example.keeplearning.repository.TerminRepository;
 import com.example.keeplearning.repository.TerminSerieRepository;
+import com.example.keeplearning.repository.UserRepository;
 import com.example.keeplearning.service.GoogleCalendarService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -28,19 +24,19 @@ public class BuchungController {
     private final TerminRepository terminRepository;
     private final TerminSerieRepository terminSerieRepository;
     private final GoogleCalendarService googleCalendarService;
-    private final BenutzerRepository benutzerRepository;
+    private final UserRepository userRepository;
 
     public BuchungController(AnzeigeRepository anzeigeRepository,
                              TerminRepository terminRepository,
                              TerminSerieRepository terminSerieRepository,
                              GoogleCalendarService googleCalendarService,
-                             BenutzerRepository benutzerRepository) {
+                             UserRepository userRepository) {
 
         this.anzeigeRepository = anzeigeRepository;
         this.terminRepository = terminRepository;
         this.terminSerieRepository = terminSerieRepository;
         this.googleCalendarService = googleCalendarService;
-        this.benutzerRepository = benutzerRepository;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/bestaetigen")
@@ -64,6 +60,8 @@ public class BuchungController {
 
         return "buchung/bestaetigen";
     }
+
+
     @PostMapping("/abschliessen")
     public String abschliessen(
             @RequestParam Long anzeigeId,
@@ -74,7 +72,7 @@ public class BuchungController {
         Anzeige anzeige = anzeigeRepository.findById(anzeigeId)
                 .orElseThrow();
 
-        //ändern sobald das Login da ist
+        // TODO: ersetzen, sobald Login da ist
         Long schuelerId = 1L;
 
         // Terminserie erzeugen
@@ -86,8 +84,8 @@ public class BuchungController {
         serie.setWochentag(date.getDayOfWeek().getValue());
         serie.setStartzeit(start);
         serie.setDauer(60);
-
         serie.setIstProbestunde(probe);
+
         serie = terminSerieRepository.save(serie);
 
         // Einzelnen Termin erzeugen
@@ -99,10 +97,11 @@ public class BuchungController {
 
         terminRepository.save(termin);
 
-        // Google Calendar Event erstellen
-        Benutzer lehrer = benutzerRepository.findById(anzeige.getUserId())
-                .orElseThrow();
+        // Lehrer (User) laden
+        User lehrer = userRepository.findById(anzeige.getUserId())
+                .orElseThrow(() -> new RuntimeException("Lehrer nicht gefunden"));
 
+        // Google Calendar Event erstellen
         if (lehrer.getGoogleRefreshToken() != null) {
             try {
                 googleCalendarService.createCalendarEvent(
@@ -118,7 +117,7 @@ public class BuchungController {
                 System.out.println("Google Calendar konnte nicht aktualisiert werden.");
             }
         }
+
         return "buchung/erfolg";
     }
-
 }

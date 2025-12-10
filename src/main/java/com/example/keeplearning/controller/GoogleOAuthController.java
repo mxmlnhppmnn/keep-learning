@@ -1,14 +1,12 @@
 package com.example.keeplearning.controller;
 
-import com.example.keeplearning.repository.BenutzerRepository;
+import com.example.keeplearning.entity.User;
+import com.example.keeplearning.repository.UserRepository;
 import com.example.keeplearning.service.GoogleOAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import com.example.keeplearning.entity.Benutzer;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/google/oauth")
@@ -22,11 +20,12 @@ public class GoogleOAuthController {
 
     private static final String SCOPE =
             "https://www.googleapis.com/auth/calendar.events";
+
     @Autowired
     private GoogleOAuthService googleOAuthService;
 
     @Autowired
-    private BenutzerRepository benutzerRepository;
+    private UserRepository userRepository;
 
 
     @GetMapping("/connect")
@@ -37,16 +36,18 @@ public class GoogleOAuthController {
                 + "&redirect_uri=" + redirectUri
                 + "&response_type=code"
                 + "&scope=" + SCOPE
-                + "&access_type=offline"     // wichtig für refresh token
-                + "&prompt=consent"          // erzwingt refresh token beim ersten Mal
-                + "&state=" + userId;        // merken, welcher Lehrer sich verbindet
+                + "&access_type=offline"
+                + "&prompt=consent"
+                + "&state=" + userId;
 
         return "redirect:" + url;
     }
+
+
     @GetMapping("/callback")
     public String callback(
             @RequestParam String code,
-            @RequestParam String state   // userId
+            @RequestParam String state // userId
     ) {
         Long userId = Long.valueOf(state);
 
@@ -54,13 +55,13 @@ public class GoogleOAuthController {
             // Token eintauschen
             String refreshToken = googleOAuthService.exchangeCodeForRefreshToken(code);
 
-            // User holen
-            Benutzer lehrer = benutzerRepository.findById(userId)
-                    .orElseThrow();
+            // User finden
+            User lehrer = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User nicht gefunden (id=" + userId + ")"));
 
-            // Refresh Token speichern
+            // Token speichern
             lehrer.setGoogleRefreshToken(refreshToken);
-            benutzerRepository.save(lehrer);
+            userRepository.save(lehrer);
 
             System.out.println("Google Refresh Token gespeichert für Lehrer #" + userId);
             System.out.println("Token: " + refreshToken);
@@ -72,6 +73,5 @@ public class GoogleOAuthController {
 
         return "redirect:/lehrer/" + userId + "/einstellungen?google=ok";
     }
-
-
 }
+
