@@ -3,15 +3,15 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 
-<div layout:fragment="content" class="container mt-4">
+<div layout:fragment="content">
 
     <h2>Buchung bestätigen</h2>
     <hr>
 
     <div class="mb-3">
-        <p><strong>Anzeige:</strong> <span th:text="${advertisement.titel}"></span></p>
-        <p><strong>Beschreibung:</strong> <span th:text="${advertisement.beschreibung}"></span></p>
-        <p><strong>Preis:</strong> <span th:text="${advertisement.preis}"></span> €</p>
+        <p><strong>Anzeige:</strong> <span th:text="${anzeige.title}"></span></p>
+        <p><strong>Beschreibung:</strong> <span th:text="${anzeige.description}"></span></p>
+        <p><strong>Preis:</strong> <span th:text="${anzeige.price}"></span> €</p>
     </div>
 
     <div class="mb-3">
@@ -28,15 +28,16 @@
     </div>
 
     <form method="post" th:action="@{/buchung/abschliessen}">
-        <input type="hidden" name="anzeigeId" th:value="${advertisement.anzeigeId}">
+        <input type="hidden" name="advertisementId" th:value="${anzeige.id}">
         <input type="hidden" name="date" th:value="${date}">
         <input type="hidden" name="start" th:value="${start}">
-        <input type="hidden" name="probe" th:value="${probe}">
+        <input type="hidden" name="trialLesson" th:value="${probe}">
 
         <button class="btn btn-success">
             Buchung abschließen
         </button>
     </form>
+
 
     <a th:href="@{/anzeigen}" class="btn btn-secondary mt-3">Abbrechen</a>
 

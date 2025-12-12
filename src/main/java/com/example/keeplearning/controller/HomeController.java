@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.example.keeplearning.dto.UserInfo;
 import com.example.keeplearning.entity.User;
 import com.example.keeplearning.service.UserService;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class HomeController {
@@ -50,8 +51,20 @@ public class HomeController {
     }
 
     @GetMapping("/user")
-    public String showUserInfo(Model model, Principal principal) {
+    public String showUserInfo(@RequestParam(required = false) String google, Model model, Principal principal) {
         User user = userService.getUser(principal).orElseThrow();
+
+        boolean isGoogleConnected = user.getGoogleRefreshToken() != null;
+        model.addAttribute("googleConnected", isGoogleConnected);
+
+        // einmalige Meldungen (OK / Fehler)
+        if ("ok".equals(google)) {
+            model.addAttribute("googleMessage", "Google Calendar erfolgreich verbunden!");
+        } else if ("error".equals(google)) {
+            model.addAttribute("googleMessage", "Fehler beim Verbinden mit Google Calendar.");
+        }
+
+        model.addAttribute("user", user);
         model.addAttribute("lines", new String[] {
                 "Name: " + user.getName(),
                 "Email: " + user.getEmail(),

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -44,8 +45,20 @@ public class GoogleOAuthService {
             os.write(body.getBytes(StandardCharsets.UTF_8));
         }
 
-        // Antwort lesen
-        JsonNode json = mapper.readTree(conn.getInputStream());
+        //Test
+        int status = conn.getResponseCode();
+        System.out.println("HTTP STATUS = " + status);
+
+        InputStream is = (status >= 400)
+                ? conn.getErrorStream()
+                : conn.getInputStream();
+
+        String raw = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+        System.out.println("GOOGLE RAW RESPONSE: " + raw);
+        //Test Ende
+
+        JsonNode json = mapper.readTree(raw);
+
 
         // refresh_token extrahieren
         return json.has("refresh_token")
@@ -70,7 +83,22 @@ public class GoogleOAuthService {
             os.write(body.getBytes(StandardCharsets.UTF_8));
         }
 
-        JsonNode json = mapper.readTree(conn.getInputStream());
+        //Test
+        int status = conn.getResponseCode();
+        System.out.println("HTTP STATUS = " + status);
+
+        InputStream is = (status >= 400)
+                ? conn.getErrorStream()
+                : conn.getInputStream();
+
+        String raw = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+        System.out.println("GOOGLE RAW RESPONSE: " + raw);
+        //Test
+
+        JsonNode json = mapper.readTree(raw);
+
+
+
 
         return json.get("access_token").asText();
     }

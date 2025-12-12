@@ -274,7 +274,7 @@ public class AdvertisementController {
         model.addAttribute("anzeige", anzeige);
         model.addAttribute("slots", slots);
 
-        return "buchung/timeslots";
+        return "booking/timeslots";
     }
 
 }

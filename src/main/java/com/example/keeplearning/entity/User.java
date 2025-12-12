@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "Benutzer")
+@Table(name = "benutzer")
 public class User implements UserDetails {
 
     @Id

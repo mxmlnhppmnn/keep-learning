@@ -21,6 +21,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/anzeigen/**").authenticated()
                         .requestMatchers("/buchung/**").authenticated()
+                        .requestMatchers("/profil/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .formLogin(form -> form

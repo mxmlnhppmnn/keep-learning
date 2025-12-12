@@ -5,5 +5,40 @@
     <div th:each="line: ${lines}">
         <p th:text="${line}"\>
         </div>
+
+    <div th:if="${googleMessage}" class="alert alert-info">
+        <span th:text="${googleMessage}"></span>
+    </div>
+
+    <div class="mt-3">
+
+        <!-- Wenn NICHT verbunden -->
+        <a th:if="${!googleConnected}"
+           th:href="@{/google/oauth/connect(userId=${user.id})}"
+           class="btn btn-primary">
+            Mit Google Calendar verbinden
+        </a>
+
+        <!-- Wenn verbunden -->
+        <div th:if="${googleConnected}">
+            <span class="badge bg-success">Google Calendar verbunden ✓</span>
+
+            <a th:href="@{/google/oauth/connect(userId=${user.id})}"
+               class="btn btn-outline-primary ms-2">
+                Erneut verbinden
+            </a>
+
+            <!-- Optional: wieder trennen -->
+            <!--
+            <a th:href="@{/google/disconnect}"
+               class="btn btn-danger ms-2">
+                Verbindung trennen
+            </a>
+            -->
+        </div>
+
+    </div>
+
+
 </main>
 </html>

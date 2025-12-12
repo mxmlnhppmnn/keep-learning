@@ -58,7 +58,7 @@ public class BookingController {
         model.addAttribute("end", end);
         model.addAttribute("probe", trialLesson);
 
-        return "buchung/bestaetigen";
+        return "booking/confirm";
     }
 
 
@@ -120,6 +120,6 @@ public class BookingController {
             }
         }
 
-        return "buchung/erfolg";
+        return "booking/success";
     }
 }
