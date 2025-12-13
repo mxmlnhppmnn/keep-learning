@@ -27,6 +27,7 @@ public class GoogleOAuthService {
 
     public String exchangeCodeForRefreshToken(String code) throws Exception {
 
+        //Verbindungsaufbau
         URL url = new URL("https://oauth2.googleapis.com/token");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
@@ -34,6 +35,7 @@ public class GoogleOAuthService {
         conn.setDoOutput(true);
         conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
+        //Body vorbereiten
         String body = "code=" + code
                 + "&client_id=" + clientId
                 + "&client_secret=" + clientSecret
@@ -45,18 +47,18 @@ public class GoogleOAuthService {
             os.write(body.getBytes(StandardCharsets.UTF_8));
         }
 
-        //Test
+        //Antwort von Google lesen
         int status = conn.getResponseCode();
-        System.out.println("HTTP STATUS = " + status);
 
+        //Falls Fehler aufgetreten sind, nimmt er den Fehlerdatenstrom, sonst den normalen
         InputStream is = (status >= 400)
                 ? conn.getErrorStream()
                 : conn.getInputStream();
 
+        //Bytes aus dem Stream lesen
         String raw = new String(is.readAllBytes(), StandardCharsets.UTF_8);
-        System.out.println("GOOGLE RAW RESPONSE: " + raw);
-        //Test Ende
 
+        //macht ein json objekt draus
         JsonNode json = mapper.readTree(raw);
 
 
@@ -67,6 +69,7 @@ public class GoogleOAuthService {
     }
     public String refreshAccessToken(String refreshToken) throws Exception {
 
+        //Verbindungsaufbau
         URL url = new URL("https://oauth2.googleapis.com/token");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
@@ -83,21 +86,16 @@ public class GoogleOAuthService {
             os.write(body.getBytes(StandardCharsets.UTF_8));
         }
 
-        //Test
         int status = conn.getResponseCode();
-        System.out.println("HTTP STATUS = " + status);
 
         InputStream is = (status >= 400)
                 ? conn.getErrorStream()
                 : conn.getInputStream();
 
         String raw = new String(is.readAllBytes(), StandardCharsets.UTF_8);
-        System.out.println("GOOGLE RAW RESPONSE: " + raw);
-        //Test
+
 
         JsonNode json = mapper.readTree(raw);
-
-
 
 
         return json.get("access_token").asText();

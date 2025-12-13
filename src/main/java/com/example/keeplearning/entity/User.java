@@ -70,17 +70,19 @@ public class User implements UserDetails {
     //////////////////////////////////////////////////////////////////////////
     //// UserDetails implementation
 
-    @Override
+    /*@Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> authorities = new HashSet<>();
         authorities.add(new Authority(role));
         return authorities;
+    }*/
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(
+                new SimpleGrantedAuthority("ROLE_" + role.toUpperCase())
+        );
     }
 
-    /*@Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role));
-    }*/
 
 
     @Override

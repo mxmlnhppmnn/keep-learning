@@ -9,9 +9,11 @@ import com.example.keeplearning.repository.LessonRepository;
 import com.example.keeplearning.repository.LessonSeriesRepository;
 import com.example.keeplearning.repository.UserRepository;
 import com.example.keeplearning.service.GoogleCalendarService;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import com.example.keeplearning.service.EmailService;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -20,6 +22,8 @@ import java.time.LocalTime;
 @RequestMapping("/buchung")
 public class BookingController {
 
+
+    private final EmailService emailService;
     private final AdvertisementRepository advertisementRepository;
     private final LessonRepository lessonRepository;
     private final LessonSeriesRepository lessonSeriesRepository;
@@ -30,13 +34,14 @@ public class BookingController {
                              LessonRepository lessonRepository,
                              LessonSeriesRepository lessonSeriesRepository,
                              GoogleCalendarService googleCalendarService,
-                             UserRepository userRepository) {
+                             UserRepository userRepository, EmailService emailService) {
 
         this.advertisementRepository = advertisementRepository;
         this.lessonRepository = lessonRepository;
         this.lessonSeriesRepository = lessonSeriesRepository;
         this.googleCalendarService = googleCalendarService;
         this.userRepository = userRepository;
+        this.emailService = emailService;
     }
 
     @GetMapping("/bestaetigen")
@@ -62,18 +67,19 @@ public class BookingController {
     }
 
 
-    @PostMapping("/abschliessen")
+    /*@PostMapping("/abschliessen")
     public String completeBooking(
             @RequestParam Long advertisementId,
             @RequestParam LocalDate date,
             @RequestParam LocalTime start,
-            @RequestParam boolean trialLesson) {
+            @RequestParam boolean trialLesson,
+            Authentication authentication) {
 
         Advertisement advertisement = advertisementRepository.findById(advertisementId)
                 .orElseThrow();
 
-        // TODO: ersetzen, sobald Login da ist
-        Long studentId = 1L;
+        User student = (User) authentication.getPrincipal();
+        Long studentId = student.getId();
 
         // Terminserie erzeugen
         LessonSeries serie = new LessonSeries();
@@ -98,9 +104,6 @@ public class BookingController {
 
         lessonRepository.save(lesson);
 
-        // Lehrer (User) laden
-        /*User lehrer = userRepository.findById(advertisement.getUserIdDeprecated())
-                .orElseThrow(() -> new RuntimeException("Lehrer nicht gefunden"));*/
         User lehrer = userRepository.findById(advertisement.getUser().getId())
                 .orElseThrow(() -> new RuntimeException("Lehrer nicht gefunden"));
         // Google Calendar Event erstellen
@@ -120,6 +123,78 @@ public class BookingController {
             }
         }
 
+        User teacher = advertisement.getUser();
+        //User student = userRepository.findById(studentId).orElseThrow();
+
+        sendBookingConfirmationMails(teacher, student, advertisement, date, start);
+
+        return "booking/success";
+    }*/
+
+    @PostMapping("/abschliessen")
+    public String completeBooking(
+            @RequestParam Long advertisementId,
+            @RequestParam LocalDate date,
+            @RequestParam LocalTime start,
+            @RequestParam boolean trialLesson,
+            Authentication authentication
+    ) {
+
+        Advertisement advertisement = advertisementRepository.findById(advertisementId)
+                .orElseThrow();
+
+        // schüler ist eingeloggt beim Buchen
+        User student = (User) authentication.getPrincipal();
+        Long studentId = student.getId();
+
+        User teacher = advertisement.getUser();
+        Long teacherId = teacher.getId();
+
+        // Serie anlegen (auch bei Probestunde)
+        LessonSeries serie = new LessonSeries();
+        serie.setTeacherId(teacherId);
+        serie.setStudentId(studentId);
+        serie.setSubjectId(advertisement.getSubject().getId());
+        serie.setWeekday(date.getDayOfWeek().getValue());
+        serie.setStartTime(start);
+        serie.setDuration(60);
+        serie.setTrialLesson(trialLesson);
+
+        serie = lessonSeriesRepository.save(serie);
+
+        // einzelner Termin in der Serie
+        Lesson lesson = new Lesson();
+        lesson.setSeriesId(serie.getId());
+        lesson.setDate(date);
+        lesson.setStartTime(start);
+        lesson.setStatus("geplant");
+
+        lessonRepository.save(lesson);
+
+        //google calendar des Lehrers
+        if (teacher.getGoogleRefreshToken() != null) {
+            try {
+                googleCalendarService.createCalendarEvent(teacher.getGoogleRefreshToken(), date, start,
+                        start.plusMinutes(60), "Nachhilfestunde",
+                        "Terminserie #" + serie.getId()
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Google Calendar konnte nicht aktualisiert werden.");
+            }
+        }
+
+        //bestätigungsmails
+        emailService.sendBookingConfirmationToStudent(
+                student.getEmail(),
+                teacher.getName(),                 // oder getFullName()
+                advertisement.getSubject().getName(),
+                date,
+                start,
+                60
+        );
+
         return "booking/success";
     }
+
 }

@@ -3,11 +3,13 @@ package com.example.keeplearning.controller;
 import com.example.keeplearning.dto.AvailabilityRequest;
 import com.example.keeplearning.dto.AvailabilityUpdateRequest;
 import com.example.keeplearning.service.TeacherAvailabilityService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
+@PreAuthorize("hasRole('TEACHER')")
 @RequestMapping("/lehrer/{userId}/verfuegbarkeit")
 public class TeacherAvailabilityPageController {
     private final TeacherAvailabilityService service;

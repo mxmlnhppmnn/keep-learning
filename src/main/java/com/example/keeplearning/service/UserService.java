@@ -74,6 +74,7 @@ public class UserService implements UserDetailsService {
             .orElseThrow(
                 () -> new UsernameNotFoundException(String.format("No user with email '%s'", email))
             );
+
     }
 
 }

@@ -38,10 +38,10 @@ public class GoogleCalendarService {
             String description
     ) throws Exception {
 
-        // 1) Access Token aus Refresh Token erzeugen
+        // Access Token aus Refresh Token erzeugen
         String accessToken = oauthService.refreshAccessToken(refreshToken);
 
-        // 2) Connection vorbereiten
+        // Verbindungsaufbau
         URL url = new URL("https://www.googleapis.com/calendar/v3/calendars/primary/events");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
@@ -52,7 +52,7 @@ public class GoogleCalendarService {
         conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
         conn.setRequestProperty("Accept", "application/json");
 
-        // 3) Datumsformat korrekt erzeugen (mit Sekunden!)
+        // Korrektes Datumsformat (wichtig! google calendar akzeptiert es nur so!)
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
 
         ZoneId zone = ZoneId.of("Europe/Berlin");
@@ -60,7 +60,7 @@ public class GoogleCalendarService {
         String startDt = ZonedDateTime.of(date, start, zone).format(formatter);
         String endDt   = ZonedDateTime.of(date, end,   zone).format(formatter);
 
-        // 4) JSON Payload erzeugen
+        // JSON Payload erzeugen
         String eventJson = """
         {
           "summary": "%s",
@@ -76,21 +76,17 @@ public class GoogleCalendarService {
         }
         """.formatted(summary, description, startDt, endDt);
 
-        // DEBUG: Das JSON ausgeben
-        System.out.println("EVENT JSON SENT TO GOOGLE:");
-        System.out.println(eventJson);
 
-        // 5) Body vorbereiten + Content-Length setzen
+        // Body u. Content Length vorbereiten und senden
         byte[] bodyBytes = eventJson.getBytes(StandardCharsets.UTF_8);
         conn.setRequestProperty("Content-Length", String.valueOf(bodyBytes.length));
 
-        // 6) Body senden
         try (OutputStream os = conn.getOutputStream()) {
             os.write(bodyBytes);
             os.flush();
         }
 
-        // 7) Antwort von Google lesen
+        // Antwort von Google
         int status = conn.getResponseCode();
 
         InputStream is = (status >= 400)
@@ -99,14 +95,12 @@ public class GoogleCalendarService {
 
         String responseRaw = new String(is.readAllBytes(), StandardCharsets.UTF_8);
 
-        System.out.println("GOOGLE EVENT RESPONSE:");
-        System.out.println(responseRaw);
 
         if (status >= 400) {
             throw new RuntimeException("Google Calendar error: " + responseRaw);
         }
 
-        // 8) Erfolgreich!
+        // Zur Sicherheit erstelltes Event ausgeben
         JsonNode json = mapper.readTree(responseRaw);
         System.out.println("GOOGLE EVENT CREATED SUCCESSFULLY: " + json);
     }
