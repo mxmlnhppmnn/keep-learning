@@ -27,19 +27,6 @@ public class TimeslotService {
         List<TeacherAvailability> verfList = verfService.getAvailabilities(userId);
         List<Timeslot> result = new ArrayList<>();
 
-        // Debug
-        System.out.println("DEBUG: Verfügbarkeiten für userId=" + userId);
-        System.out.println("DEBUG: Anzahl=" + verfList.size());
-        for (TeacherAvailability v : verfList) {
-            System.out.println(
-                    "   ID=" + v.getId() +
-                            " Wochentag=" + v.getWeekday() +
-                            " Start=" + v.getStartTime() +
-                            " Ende=" + v.getEndTime() +
-                            " gültigAb=" + v.getValidFrom() +
-                            " gültigBis=" + v.getValidUntil()
-            );
-        }
 
         LocalDate today = LocalDate.now();
         LocalDate until = today.plusDays(7); //vllt später ändern auf 14?
@@ -55,7 +42,7 @@ public class TimeslotService {
                 if (v.getWeekday() != wochentag)
                     continue;
 
-                // Gültigkeitszeitraum wird später noch ins html getan für z.B. Urlaub
+                // Gültigkeitszeitraum wird vielleicht später noch ins html getan für z.B. Urlaub
                 if (v.getValidFrom() != null && date.isBefore(v.getValidFrom()))
                     continue;
 

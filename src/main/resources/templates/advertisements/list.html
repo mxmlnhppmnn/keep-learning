@@ -6,7 +6,10 @@
       layout:decorate="~{layout}">
 
 <main layout:fragment="content">
-    <h1 class="mb-4">Alle Anzeigen</h1>
+    <h1 class="mb-4" th:if="${suchbegriff == null}">
+        Alle Anzeigen
+    </h1>
+
 
     <p th:if="${suchbegriff}">
         Suchergebnisse für "<span th:text="${suchbegriff}"></span>"

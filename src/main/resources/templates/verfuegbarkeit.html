@@ -101,7 +101,7 @@
                             <div class="row">
                                 <div class="col">
                                     <label class="form-label">Wochentag</label>
-                                    <select name="wochentag" class="form-select">
+                                    <select name="weekday" class="form-select">
                                         <option value="1">Mo</option>
                                         <option value="2">Di</option>
                                         <option value="3">Mi</option>
@@ -114,12 +114,12 @@
 
                                 <div class="col">
                                     <label class="form-label">Startzeit</label>
-                                    <input type="time" name="startZeit" th:value="${v.startTime}" class="form-control">
+                                    <input type="time" name="startTime" th:value="${v.startTime}" class="form-control">
                                 </div>
 
                                 <div class="col">
                                     <label class="form-label">Endzeit</label>
-                                    <input type="time" name="endZeit" th:value="${v.endTime}" class="form-control">
+                                    <input type="time" name="endTime" th:value="${v.endTime}" class="form-control">
                                 </div>
 
                                 <div class="col">

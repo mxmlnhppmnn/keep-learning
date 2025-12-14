@@ -25,6 +25,8 @@ public class User implements UserDetails {
     private String password;
     private String role;
     private String googleRefreshToken;
+    @Column(nullable = false)
+    private boolean verified = false;
 
     public String getName() {
         return name;
@@ -58,6 +60,10 @@ public class User implements UserDetails {
     public void setGoogleRefreshToken(String googleRefreshToken) {
         this.googleRefreshToken = googleRefreshToken;
     }
+
+    public boolean isVerified() { return verified; }
+
+    public void setVerified(boolean verified) { this.verified = verified; }
 
     public User() {}
     public User(String name, String email, String password, String role) {

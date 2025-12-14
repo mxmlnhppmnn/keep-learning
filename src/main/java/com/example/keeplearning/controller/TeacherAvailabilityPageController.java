@@ -9,7 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@PreAuthorize("hasRole('TEACHER')")
+@PreAuthorize("hasRole('TEACHER')") //nur Lehrer sollen Verfügbarkeiten haben
 @RequestMapping("/lehrer/{userId}/verfuegbarkeit")
 public class TeacherAvailabilityPageController {
     private final TeacherAvailabilityService service;
@@ -30,6 +30,7 @@ public class TeacherAvailabilityPageController {
         return "verfuegbarkeit";
     }
 
+    //neue Verfügbarkeit hinzufügen
     @PostMapping
     public String createVerfuegbarkeit(@PathVariable Long userId, @ModelAttribute("form") AvailabilityRequest request){
         service.create(userId, request);
@@ -47,6 +48,7 @@ public class TeacherAvailabilityPageController {
         return "redirect:/lehrer/" + userId + "/verfuegbarkeit";
     }
 
+    //Bearbeiten einer bestehenden Verfügbarkeit
     @PostMapping("/update/{id}")
     public String updateVerfuegbarkeit(
             @PathVariable Long userId,

@@ -86,6 +86,7 @@ public class GoogleOAuthService {
             os.write(body.getBytes(StandardCharsets.UTF_8));
         }
 
+        //Antwort von Google
         int status = conn.getResponseCode();
 
         InputStream is = (status >= 400)
@@ -94,9 +95,7 @@ public class GoogleOAuthService {
 
         String raw = new String(is.readAllBytes(), StandardCharsets.UTF_8);
 
-
         JsonNode json = mapper.readTree(raw);
-
 
         return json.get("access_token").asText();
     }

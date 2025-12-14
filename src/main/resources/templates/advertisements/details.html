@@ -44,7 +44,7 @@
         </a>
 
         <!-- Buchen -->
-        <a th:href="@{/anzeigen/{id}/buchen(id=${advertisement.id})}"
+        <a sec:authorize="hasRole('STUDENT')" th:href="@{/anzeigen/{id}/buchen(id=${advertisement.id})}"
            class="btn btn-primary">
             Buchen
         </a>

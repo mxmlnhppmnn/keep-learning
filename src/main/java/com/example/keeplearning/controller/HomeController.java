@@ -26,6 +26,7 @@ public class HomeController {
         return "home";
     }
 
+
     @GetMapping("/register")
     public String showRegisterPage(Model model) {
         model.addAttribute("userInfo", new UserInfo());

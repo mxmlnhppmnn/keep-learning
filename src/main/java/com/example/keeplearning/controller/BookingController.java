@@ -66,71 +66,6 @@ public class BookingController {
         return "booking/confirm";
     }
 
-
-    /*@PostMapping("/abschliessen")
-    public String completeBooking(
-            @RequestParam Long advertisementId,
-            @RequestParam LocalDate date,
-            @RequestParam LocalTime start,
-            @RequestParam boolean trialLesson,
-            Authentication authentication) {
-
-        Advertisement advertisement = advertisementRepository.findById(advertisementId)
-                .orElseThrow();
-
-        User student = (User) authentication.getPrincipal();
-        Long studentId = student.getId();
-
-        // Terminserie erzeugen
-        LessonSeries serie = new LessonSeries();
-        //serie.setLehrerId(advertisement.getUserIdDeprecated());
-        serie.setTeacherId(advertisement.getUser().getId());
-        serie.setStudentId(studentId);
-        serie.setSubjectId(advertisement.getSubject().getId());
-
-        serie.setWeekday(date.getDayOfWeek().getValue());
-        serie.setStartTime(start);
-        serie.setDuration(60);
-        serie.setTrialLesson(trialLesson);
-
-        serie = lessonSeriesRepository.save(serie);
-
-        // Einzelnen Termin erzeugen
-        Lesson lesson = new Lesson();
-        lesson.setSeriesId(serie.getId());
-        lesson.setDate(date);
-        lesson.setStartTime(start);
-        lesson.setStatus("geplant");
-
-        lessonRepository.save(lesson);
-
-        User lehrer = userRepository.findById(advertisement.getUser().getId())
-                .orElseThrow(() -> new RuntimeException("Lehrer nicht gefunden"));
-        // Google Calendar Event erstellen
-        if (lehrer.getGoogleRefreshToken() != null) {
-            try {
-                googleCalendarService.createCalendarEvent(
-                        lehrer.getGoogleRefreshToken(),
-                        date,
-                        start,
-                        start.plusMinutes(60),
-                        "Nachhilfestunde",
-                        "Terminserie #" + serie.getId()
-                );
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.out.println("Google Calendar konnte nicht aktualisiert werden.");
-            }
-        }
-
-        User teacher = advertisement.getUser();
-        //User student = userRepository.findById(studentId).orElseThrow();
-
-        sendBookingConfirmationMails(teacher, student, advertisement, date, start);
-
-        return "booking/success";
-    }*/
-
     @PostMapping("/abschliessen")
     public String completeBooking(
             @RequestParam Long advertisementId,
@@ -184,10 +119,10 @@ public class BookingController {
             }
         }
 
-        //bestätigungsmails
+        //bestätigungsmail an den schüler
         emailService.sendBookingConfirmationToStudent(
                 student.getEmail(),
-                teacher.getName(),                 // oder getFullName()
+                teacher.getName(),
                 advertisement.getSubject().getName(),
                 date,
                 start,

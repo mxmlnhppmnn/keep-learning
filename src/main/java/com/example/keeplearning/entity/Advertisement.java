@@ -6,23 +6,22 @@ import jakarta.persistence.*;
 public class Advertisement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;   // OK ohne @Column!
-
+    private Long id;
     @ManyToOne
-    @JoinColumn(name = "user_id") // nötig
+    @JoinColumn(name = "user_id")
     private User user;
 
-    private String title; // OK ohne @Column
-    private String description; // OK ohne @Column
-    private Double price; // OK ohne @Column
-    private String imagePath; // OK ohne @Column
+    private String title;
+    private String description;
+    private Double price;
+    private String imagePath;
 
     @ManyToOne
-    @JoinColumn(name = "subject_id")  // nötig
+    @JoinColumn(name = "subject_id")
     private Subject subject;
 
     @ManyToOne
-    @JoinColumn(name = "school_type_id") // nötig
+    @JoinColumn(name = "school_type_id")
     private SchoolType schoolType;
 
     private Boolean trialLesson;

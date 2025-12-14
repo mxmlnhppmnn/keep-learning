@@ -49,6 +49,7 @@ public class AdvertisementController {
         return "advertisements/list";
     }
 
+    //Anzeige erstellen
     @GetMapping("/neu")
     public String showCreateForm(Model model) {
         model.addAttribute("anzeige", new Advertisement());
@@ -58,23 +59,12 @@ public class AdvertisementController {
     }
 
     @GetMapping("/{id}")
-    public String showAdvertisementDetails(@PathVariable Long id, Model model, Principal principal) {
+    public String showAdvertisementDetails(@PathVariable Long id, Model model, @AuthenticationPrincipal User user,
+                                           Principal principal) {
 
         Advertisement ad = advertisementRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Anzeige wurde nicht gefunden"));
 
-        // aktuellen Benutzer bestimmen (Fake-Login solange kein echtes Login da ist)
-        String email;
-        if (principal != null) {
-            email = principal.getName();
-        } else {
-            email = "test@test.de";
-        }
-
-        User user = userRepository.findByEmail(email).orElse(null);
-
-
-        //boolean isOwner = user != null && user.getId().equals(advertisement.getUserIdDeprecated());
         boolean isOwner = user != null && user.getId().equals(ad.getUser().getId());
 
         model.addAttribute("advertisement", ad);
@@ -84,24 +74,11 @@ public class AdvertisementController {
     }
 
     @GetMapping("/bearbeiten/{id}")
-    public String showEditForm(@PathVariable Long id, Model model, Principal principal){
+    public String showEditForm(@PathVariable Long id, Model model, @AuthenticationPrincipal User user,
+                               Principal principal){
         Advertisement ad = advertisementRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("Anzeige wurde nicht gefunden"));
 
-        // Nutzer ermitteln (mit Fake-Login fallback)
-        User user;
-        if (principal != null) {
-            user = userRepository.findByEmail(principal.getName()).orElse(null);
-        } else {
-            user = userRepository.findByEmail("test@test.de").orElse(null);
-            if (user == null) {
-                throw new RuntimeException("Mock-Benutzer 'test@test.de' existiert nicht in der Datenbank.");
-            }
-        }
-
-        /*if (!advertisement.getUserIdDeprecated().equals(user.getId())){
-            return "redirect:/anzeigen";
-        }*/
         if(!ad.getUser().getId().equals(user.getId())){
             return "redirect:/anzeigen";
         }
@@ -117,7 +94,7 @@ public class AdvertisementController {
         // Bei leerer Suche alle Anzeigen anzeigen
         if (query == null || query.trim().isEmpty()){
             model.addAttribute("anzeigen", advertisementRepository.findAll());
-            return "list";
+            return "advertisements/list";
         }
 
         List<Advertisement> results = advertisementRepository.searchAll(query);
@@ -157,10 +134,6 @@ public class AdvertisementController {
         advertisement.setSubject(subject);
         SchoolType s = schoolTypeRepository.findById(schoolTypeId).orElseThrow();
         advertisement.setSchoolType(s);
-
-        //advertisement.setUserIdDeprecated(1L); // TODO: ändern, sobald Login-Feature da ist
-        /*User currentUser = userRepository.findByEmail(principal.getName())
-                .orElseThrow();*/
 
         advertisement.setUser(user);
 
@@ -247,9 +220,6 @@ public class AdvertisementController {
             user = userRepository.findByEmail("test@test.de").orElse(null);
         }
 
-        /*if (user == null || !advertisement.getUserIdDeprecated().equals(user.getId())) {
-            return "redirect:/anzeigen";
-        }*/
         if (user == null || !ad.getUser().getId().equals(user.getId())) {
             return "redirect:/anzeigen";
         }

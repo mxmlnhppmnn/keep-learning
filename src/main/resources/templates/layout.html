@@ -12,8 +12,6 @@
 
 
 </head>
-
-<!--<body th:with="auth=${#authentication}" class="bg-light">-->
 <body class="bg-light">
 
 <header class="bg-white border-bottom py-2">
@@ -28,7 +26,7 @@
         </div>
 
         <!-- Search mittig -->
-        <form th:action="@{/templates/advertisements/suche}" method="get" class="flex-grow-1 px-4">
+        <form th:action="@{/anzeigen/suche}" method="get" class="flex-grow-1 px-4">
             <input type="text"
                    name="q"
                    class="form-control"
