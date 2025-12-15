@@ -13,7 +13,6 @@
 
 </head>
 <body class="bg-light">
-
 <header class="bg-white border-bottom py-2">
     <div class="container-fluid d-flex align-items-center justify-content-between">
 
@@ -55,9 +54,15 @@
             <ul class="nav flex-column">
                 <li class="nav-item"><a class="nav-link" th:href="@{/home}">Startseite</a></li>
                 <li class="nav-item"><a class="nav-link" th:href="@{/anzeigen}">Nachhilfe</a></li>
+                <!-- Nur für Administratoren -->
+                <li class="nav-item" sec:authorize="hasAuthority('ROLE_ADMIN')">
+                    <a class="nav-link" th:href="@{/admin/verifications}">
+                        Verifizierungsanträge
+                    </a>
+                </li>
 
                 <!-- Nur Lehrer -->
-                <li class="nav-item" sec:authorize="hasRole('TEACHER')">
+                <li class="nav-item" sec:authorize="hasAuthority('ROLE_TEACHER')">
                     <a class="nav-link" th:href="@{/anzeigen/neu}">
                         Anzeige erstellen
                     </a>

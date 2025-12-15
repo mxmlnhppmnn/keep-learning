@@ -80,6 +80,8 @@ public class VerificationService {
         User user = request.getUser();
         user.setVerified(true);
 
+        userRepository.save(user);
+        verificationRequestRepository.save(request);
     }
 
     //ablehnen mit Grund
@@ -98,6 +100,8 @@ public class VerificationService {
         request.setReviewedAt(LocalDateTime.now());
         request.setReviewedBy(admin);
         request.setRejectionReason(reason);
+
+        verificationRequestRepository.save(request);
     }
 
 
