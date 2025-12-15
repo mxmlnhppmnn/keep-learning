@@ -51,7 +51,7 @@ public class HomeController {
         return "login";
     }
 
-    @GetMapping("/user")
+    /*@GetMapping("/user")
     public String showUserInfo(@RequestParam(required = false) String google, Model model, Principal principal) {
         User user = userService.getUser(principal).orElseThrow();
 
@@ -72,6 +72,6 @@ public class HomeController {
                 "Passwort: " + user.getPassword()
         });
         return "utils/show-text";
-    }
+    }*/
 
 }

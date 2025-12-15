@@ -30,15 +30,54 @@
                 Erneut verbinden
             </a>
         </div>
+        <hr sec:authorize="hasRole('TEACHER')">
+        <h3 sec:authorize="hasRole('TEACHER')">Gib an, wann du Zeit hast zu Unterrichten!</h3>
         <a sec:authorize="hasRole('TEACHER')"
            th:href="@{/lehrer/{id}/verfuegbarkeit(id=${#authentication.principal.id})}"
            class="btn btn-primary">
             Verfügbarkeit verwalten
         </a>
-
-
     </div>
 
+    <hr>
+    <h3>Verifizierung</h3>
+
+    <!-- antrag stellen -->
+    <div th:if="${!user.verified and !hasPending}">
+        <form th:action="@{/user/verification}"
+              method="post"
+              enctype="multipart/form-data"
+              th:csrf>
+
+            <label>Nachweis (PDF oder Bild):</label>
+            <input type="file" name="document" required>
+
+            <button type="submit" class="btn btn-primary">
+                Jetzt verifizieren
+            </button>
+        </form>
+    </div>
+
+    <!-- verifiziert -->
+    <div th:if="${user.verified}">
+        <p>Dein Account ist verifiziert.</p>
+    </div>
+
+    <!-- antrag läuft -->
+    <div th:if="${!user.verified and hasPending}">
+        <p>Dein Verifizierungsantrag wird geprüft.</p>
+    </div>
+
+    <!-- Abgelehnt (nur wenn kein neuer antrag pending ist)) -->
+    <div th:if="${!user.verified and !hasPending and rejectedRequest != null}">
+        <p style="color: red;">
+            Dein Verifizierungsantrag wurde abgelehnt.
+        </p>
+        <p>
+            <strong>Grund:</strong>
+            <span th:text="${rejectedRequest.rejectionReason}"></span>
+        </p>
+    </div>
 
 </main>
 </html>

@@ -1,9 +1,6 @@
 package com.example.keeplearning.entity;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -82,12 +79,32 @@ public class User implements UserDetails {
         authorities.add(new Authority(role));
         return authorities;
     }*/
-    @Override
+    /*@Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(
                 new SimpleGrantedAuthority("ROLE_" + role.toUpperCase())
         );
+    }*/
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+
+        List<GrantedAuthority> authorities = new ArrayList<>();
+
+        // Rolle
+        authorities.add(
+                new SimpleGrantedAuthority("ROLE_" + role.toUpperCase())
+        );
+
+        // Verifizierungsstatus
+        if (verified) {
+            authorities.add(
+                    new SimpleGrantedAuthority("VERIFIED")
+            );
+        }
+
+        return authorities;
     }
+
 
 
 

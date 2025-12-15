@@ -19,12 +19,16 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/anzeigen/neu").hasAuthority("VERIFIED")
                         .requestMatchers("/anzeigen/neu").hasRole("TEACHER")
                         .requestMatchers("/anzeigen/**").authenticated()
-                        .requestMatchers("/buchung/**").authenticated()
+                        .requestMatchers("/buchung/**").hasAuthority("VERIFIED")
+                        .requestMatchers("/buchung/**").hasRole("STUDENT")
                         .requestMatchers("/profil/**").authenticated()
+                        .requestMatchers("/lehrer/**").hasAuthority("VERIFIED")
                         .requestMatchers("/lehrer/**").hasRole("TEACHER")
-
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/users/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .formLogin(form -> form

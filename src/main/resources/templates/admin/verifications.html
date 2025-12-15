@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+
+<div layout:fragment="content">
+
+<h1>Verifizierungsanträge</h1>
+    <table>
+        <tr>
+            <th>User</th>
+            <th>Rolle</th>
+            <th>Datum</th>
+            <th>Dokument</th>
+            <th>Aktion</th>
+        </tr>
+
+        <tr th:each="req : ${requests}">
+            <td th:text="${req.user.email}">email</td>
+            <td th:text="${req.user.role}">role</td>
+            <td th:text="${req.createdAt}">date</td>
+
+            <td>
+                <a th:if="${req.documentPath != null}"
+                   th:href="@{|/admin/verifications/${req.id}/document|}">
+                    Dokument ansehen
+                </a>
+                <span th:if="${req.documentPath == null}">
+                —
+            </span>
+            </td>
+
+            <td>
+                <div class="d-flex align-items-center gap-2">
+                    <form th:action="@{|/admin/verifications/${req.id}/approve|}"
+                          method="post"
+                          th:csrf>
+                        <button type="submit" class="btn btn-primary">
+                            Annehmen
+                        </button>
+                    </form>
+                    <form th:action="@{|/admin/verifications/${req.id}/reject|}"
+                          method="post"
+                          th:csrf
+                          class="d-flex align-items-center gap-2">
+
+                        <input type="text"
+                               name="reason"
+                               placeholder="Ablehnungsgrund"
+                               class="form-control form-control-sm"
+                               style="width: 160px;"
+                               required>
+
+                        <button type="submit" class="btn btn-warning">
+                            Ablehnen
+                        </button>
+                    </form>
+                </div>
+            </td>
+
+        </tr>
+    </table>
+</div>
