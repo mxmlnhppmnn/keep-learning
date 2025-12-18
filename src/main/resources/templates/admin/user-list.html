@@ -6,42 +6,115 @@
 
 <div layout:fragment="content">
     <table class="table">
+        <thead>
         <tr>
             <th>Name</th>
             <th>Email</th>
             <th>Status</th>
+            <th>Sperre bis</th>
+            <th>Sperrgrund</th>
             <th>Aktionen</th>
         </tr>
+        </thead>
 
+        <tbody>
         <tr th:each="user : ${users}">
+            <!-- Name -->
             <td th:text="${user.name}"></td>
+
+            <!-- Email -->
             <td th:text="${user.email}"></td>
+
+            <!-- Status -->
             <td th:text="${user.status}"></td>
 
+            <!-- Sperre bis -->
+            <td>
+                <!-- Nur bei gesperrten Usern -->
+                <span th:if="${user.status.name() == 'LOCKED'}">
+
+                    <!-- Unbefristet -->
+                    <span th:if="${user.lockedUntil == null}">
+                        unbefristet
+                    </span>
+
+                    <!-- Enddatum -->
+                    <span th:if="${user.lockedUntil != null}"
+                          th:text="${#temporals.format(user.lockedUntil, 'dd.MM.yyyy HH:mm')}">
+                    </span>
+
+                </span>
+
+                <!-- Nicht gesperrt -->
+                <span th:if="${user.status.name() != 'LOCKED'}">
+                    –
+                </span>
+            </td>
+
+            <!-- Sperrgrund -->
+            <td>
+                <span th:if="${user.status.name() == 'LOCKED' and user.lockReason != null}"
+                    th:text="${user.lockReason}">
+                </span>
+                <span th:if="${user.status.name() != 'LOCKED' or user.lockReason == null}">
+                    –
+                </span>
+            </td>
+
+            <!-- Aktionen -->
             <td>
                 <!-- Sperren -->
                 <form th:if="${user.status.name() == 'ACTIVE'}"
                       th:action="@{/admin/users/{id}/lock(id=${user.id})}"
-                      method="post">
-                    <button class="btn btn-warning">Sperren</button>
+                      method="post"
+                      class="d-flex gap-2 align-items-center">
+
+                    <!-- Sperr-Enddatum -->
+                    <input type="datetime-local"
+                           name="until"
+                           class="form-control form-control-sm"
+                           style="max-width: 200px;"
+                           title="Leer lassen = unbefristete Sperre">
+
+                    <!-- Grund für die Sperre -->
+                    <input type="text"
+                           name="reason"
+                           class="form-control form-control-sm"
+                           placeholder="Sperrgrund (optional)"
+                           style="max-width: 220px;">
+
+
+                    <!-- Sperr-Button -->
+                    <button class="btn btn-warning btn-sm"
+                            th:disabled="${user.id == currentAdminId}"
+                            th:classappend="${user.id == currentAdminId} ? ' disabled opacity-50'">
+                        Sperren
+                    </button>
                 </form>
+
 
                 <!-- Entsperren -->
                 <form th:if="${user.status.name() == 'LOCKED'}"
                       th:action="@{/admin/users/{id}/unlock(id=${user.id})}"
                       method="post">
-                    <button class="btn btn-success">Entsperren</button>
+                    <button class="btn btn-success">
+                        Entsperren
+                    </button>
                 </form>
 
                 <!-- Löschen -->
                 <form th:action="@{/admin/users/{id}/delete(id=${user.id})}"
                       method="post">
-                    <button class="btn btn-danger">Löschen</button>
+                    <button class="btn btn-danger"
+                            th:disabled="${user.id == currentAdminId}"
+                            th:classappend="${user.id == currentAdminId} ? ' disabled opacity-50'">
+                        Löschen
+                    </button>
                 </form>
             </td>
         </tr>
+        </tbody>
     </table>
-
-
 </div>
+
 </html>

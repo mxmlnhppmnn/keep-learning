@@ -7,7 +7,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import com.example.keeplearning.entity.User;
+import com.example.keeplearning.service.UserService;
 
+
+import java.security.Principal;
 import java.time.LocalDateTime;
 
 @Controller
@@ -15,40 +19,70 @@ import java.time.LocalDateTime;
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminUserController {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserService userService;
+    private final UserAdminService userAdminService;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UserAdminService adminService;
+    AdminUserController(UserService userService, UserAdminService userAdminService, UserRepository userRepository) {
+        this.userService = userService;
+        this.userAdminService = userAdminService;
+        this.userRepository = userRepository;
+    }
 
+    //Liste aller user
+    //eigene admin id wird mitgegeben, um das anti-selbst-sperre zu ermöglichen
     @GetMapping
-    public String listUsers(Model model) {
+    public String listUsers(Model model, Principal principal) {
+
+        User currentAdmin = userService
+                .getUserByEmail(principal.getName())
+                .orElseThrow();
+
         model.addAttribute("users", userRepository.findAll());
+        model.addAttribute("currentAdminId", currentAdmin.getId());
         return "admin/user-list";
     }
 
+    //sperren eines users
     @PostMapping("/{id}/lock")
     public String lockUser(
             @PathVariable Long id,
-            @RequestParam(required = false) String until) {
+            @RequestParam(required = false) String until, @RequestParam(required = false) String reason,
+            Principal principal) {
 
-        LocalDateTime lockUntil = until == null || until.isBlank()
-                ? null
-                : LocalDateTime.parse(until);
+        User admin = userService.getUserByEmail(principal.getName())
+                .orElseThrow();
 
-        adminService.lockUser(id, lockUntil, "Admin-Sperre");
+        LocalDateTime lockUntil = null;
+
+        if (until != null && !until.isBlank()) {
+            lockUntil = LocalDateTime.parse(until);
+        }
+
+        userAdminService.lockUser(admin.getId(), id, lockUntil, reason);
+
         return "redirect:/admin/users";
     }
 
+    //entsperren eines users
     @PostMapping("/{id}/unlock")
     public String unlockUser(@PathVariable Long id) {
-        adminService.unlockUser(id);
+        userAdminService.unlockUser(id);
         return "redirect:/admin/users";
     }
 
+    //soft deleting eines users
+    //wird nicht wirklich aus der DB gelöscht
     @PostMapping("/{id}/delete")
-    public String deleteUser(@PathVariable Long id) {
-        adminService.deleteUser(id);
+    public String deleteUser(
+            @PathVariable Long id,
+            Principal principal) {
+
+        User admin = userService.getUserByEmail(principal.getName())
+                .orElseThrow();
+
+        userAdminService.deleteUser(admin.getId(), id);
+
         return "redirect:/admin/users";
     }
 }

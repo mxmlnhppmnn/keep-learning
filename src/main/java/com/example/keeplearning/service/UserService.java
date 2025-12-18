@@ -1,8 +1,11 @@
 package com.example.keeplearning.service;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
+import com.example.keeplearning.entity.UserStatus;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -65,16 +68,42 @@ public class UserService implements UserDetailsService {
         );
     }
 
-    //////////////////////////////////////////////////////////////////////////
-    //// UserDetails implementation
+    //UserDetails implementieren
 
-    @Override
+    /*@Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
         return userRepository.findByEmail(email)
             .orElseThrow(
                 () -> new UsernameNotFoundException(String.format("No user with email '%s'", email))
             );
 
+    }*/
+
+    @Override
+    @Transactional
+    public UserDetails loadUserByUsername(String email)
+            throws UsernameNotFoundException {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException(
+                                String.format("No user with email '%s'", email)
+                        )
+                );
+
+        // automatisches entsperrren nach abgelaufener Sperre
+        if (user.getStatus() == UserStatus.LOCKED
+                && user.getLockedUntil() != null
+                && LocalDateTime.now().isAfter(user.getLockedUntil())) {
+
+            user.setStatus(UserStatus.ACTIVE);
+            user.setLockedUntil(null);
+            user.setLockReason(null);
+        }
+
+        return user;
     }
+
 
 }
