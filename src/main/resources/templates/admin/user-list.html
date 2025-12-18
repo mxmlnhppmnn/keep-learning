@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+
+<div layout:fragment="content">
+    <table class="table">
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Aktionen</th>
+        </tr>
+
+        <tr th:each="user : ${users}">
+            <td th:text="${user.name}"></td>
+            <td th:text="${user.email}"></td>
+            <td th:text="${user.status}"></td>
+
+            <td>
+                <!-- Sperren -->
+                <form th:if="${user.status.name() == 'ACTIVE'}"
+                      th:action="@{/admin/users/{id}/lock(id=${user.id})}"
+                      method="post">
+                    <button class="btn btn-warning">Sperren</button>
+                </form>
+
+                <!-- Entsperren -->
+                <form th:if="${user.status.name() == 'LOCKED'}"
+                      th:action="@{/admin/users/{id}/unlock(id=${user.id})}"
+                      method="post">
+                    <button class="btn btn-success">Entsperren</button>
+                </form>
+
+                <!-- Löschen -->
+                <form th:action="@{/admin/users/{id}/delete(id=${user.id})}"
+                      method="post">
+                    <button class="btn btn-danger">Löschen</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+
+
+</div>
+</html>

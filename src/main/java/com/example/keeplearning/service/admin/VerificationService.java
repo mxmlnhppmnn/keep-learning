@@ -1,4 +1,4 @@
-package com.example.keeplearning.service;
+package com.example.keeplearning.service.admin;
 
 import com.example.keeplearning.entity.User;
 import com.example.keeplearning.entity.verification.VerificationRequest;

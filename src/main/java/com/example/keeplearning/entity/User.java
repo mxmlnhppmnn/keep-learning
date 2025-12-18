@@ -1,5 +1,6 @@
 package com.example.keeplearning.entity;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -24,6 +25,12 @@ public class User implements UserDetails {
     private String googleRefreshToken;
     @Column(nullable = false)
     private boolean verified = false;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserStatus status = UserStatus.ACTIVE;
+
+    private LocalDateTime lockedUntil;
+    private String lockReason;
 
     public String getName() {
         return name;
@@ -114,15 +121,67 @@ public class User implements UserDetails {
         return email;
     }
 
+    public UserStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(UserStatus status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getLockedUntil() {
+        return lockedUntil;
+    }
+
+    public void setLockedUntil(LocalDateTime lockedUntil) {
+        this.lockedUntil = lockedUntil;
+    }
+
+    public String getLockReason() {
+        return lockReason;
+    }
+
+    public void setLockReason(String lockReason) {
+        this.lockReason = lockReason;
+    }
+
+    public boolean isLocked() {
+        if (status != UserStatus.LOCKED) {
+            return false;
+        }
+
+        if (lockedUntil == null) {
+            return true; // unbefristet gesperrt
+        }
+
+        return LocalDateTime.now().isBefore(lockedUntil);
+    }
+
+    //soft delete nur, wird nicht wirklich aus der Tabelle gelöscht
+    public boolean isDeleted() {
+        return status == UserStatus.DELETED;
+    }
+
     @Override
     public boolean isAccountNonExpired() { return true; }
 
+    //automatisch nach Ablauf der Sperre den Account wieder freigeben
     @Override
-    public boolean isAccountNonLocked() { return true; }
+    public boolean isAccountNonLocked() {
+        if (status == UserStatus.LOCKED && lockedUntil != null) {
+            if (LocalDateTime.now().isAfter(lockedUntil)) {
+                status = UserStatus.ACTIVE;
+                lockedUntil = null;
+            }
+        }
+        return !isLocked();
+    }
 
     @Override
     public boolean isCredentialsNonExpired() { return true; }
 
     @Override
-    public boolean isEnabled() { return true; }
+    public boolean isEnabled() {
+        return status != UserStatus.DELETED;
+    }
 }

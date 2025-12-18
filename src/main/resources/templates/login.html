@@ -4,7 +4,7 @@
 <main layout:fragment="content">
     <h1>Willkommen</h1>
     <div>
-        <p th:if="${param.error}" class="text-danger">
+        <p th:if="${param.error != null and session.LOGIN_ERROR == null}" class="text-danger">
             Falsche E-Mail oder Passwort
         </p>
         <form action="#" th:action="@{/login}" th:object="${user}" method="post">
@@ -16,6 +16,10 @@
 
             <button type="submit" class="btn btn-primary mt-2">Einloggen</button>
         </form>
+        <div th:if="${session.LOGIN_ERROR}" class="alert alert-danger">
+            <p th:text="${session.LOGIN_ERROR}"></p>
+        </div>
+
     </div>
 </main>
 </html>

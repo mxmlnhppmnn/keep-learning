@@ -4,7 +4,7 @@ import com.example.keeplearning.entity.User;
 import com.example.keeplearning.entity.verification.VerificationRequest;
 import com.example.keeplearning.entity.verification.VerificationRequestStatus;
 import com.example.keeplearning.repository.VerificationRequestRepository;
-import com.example.keeplearning.service.VerificationService;
+import com.example.keeplearning.service.admin.VerificationService;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
