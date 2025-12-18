@@ -103,7 +103,8 @@
                 </form>
 
                 <!-- Löschen -->
-                <form th:action="@{/admin/users/{id}/delete(id=${user.id})}"
+                <form th:if="${user.status.name() != 'DELETED'}"
+                      th:action="@{/admin/users/{id}/delete(id=${user.id})}"
                       method="post">
                     <button class="btn btn-danger"
                             th:disabled="${user.id == currentAdminId}"
