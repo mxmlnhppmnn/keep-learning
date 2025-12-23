@@ -3,7 +3,10 @@
       layout:decorate="~{layout}"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <main layout:fragment="content">
-    <h1>Willkommen</h1>
-    <p>Das ist die Startseite.</p>
+    <h1 th:text="${@t.t('Willkommen')}"></h1>
+    <p th:text="${@t.t('Das ist die Startseite')}"></p>
 </main>
 </html>
+
+
+

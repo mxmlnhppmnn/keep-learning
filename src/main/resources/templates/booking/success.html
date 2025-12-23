@@ -4,10 +4,13 @@
       layout:decorate="~{layout}">
 
 <div layout:fragment="content">
-    <h2>Buchung erfolgreich!</h2>
-    <p>Dein Termin wurde gespeichert.</p>
+    <h2 th:text="${@t.t('Buchung erfolgreich!')}"></h2>
+    <p th:text="${@t.t('Dein Termin wurde gespeichert.')}"></p>
 
-    <a th:href="@{/anzeigen}" class="btn btn-primary">Zurück zur Übersicht</a>
+    <a th:href="@{/anzeigen}"
+       class="btn btn-primary"
+       th:text="${@t.t('Zurück zur Übersicht')}"></a>
 </div>
 
 </html>
+

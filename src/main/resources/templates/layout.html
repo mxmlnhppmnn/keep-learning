@@ -33,14 +33,22 @@
                    th:value="${suchbegriff}">
         </form>
 
+        <div class="d-flex align-items-center">
+            <a th:href="${currentPath + queryPrefix + 'lang=DE'}">DE</a> |
+            <a th:href="${currentPath + queryPrefix + 'lang=EN'}">EN</a> |
+            <a th:href="${currentPath + queryPrefix + 'lang=FR'}">FR</a>
+
+        </div>
+
+
         <!-- Buttons rechts -->
         <div sec:authorize="!isAuthenticated()" class="d-flex align-items-center">
-            <a th:href="@{/login}" class="btn btn-outline-primary me-2">Einloggen</a>
-            <a th:href="@{/register}" class="btn btn-primary">Registrieren</a>
+            <a th:href="@{/login}" class="btn btn-outline-primary me-2" th:text="${@t.t('Einloggen')}"></a>
+            <a th:href="@{/register}" class="btn btn-primary" th:text="${@t.t('Registrieren')}"></a>
         </div>
         <div sec:authorize="isAuthenticated()" class="d-flex align-items-center">
-            <form method="post" th:action="@{/logout}"> <button type="submit" class="btn btn-outline-primary me-2">Logout</button> </form>
-            <a th:href="@{/user}" class="btn btn-primary">Profil</a>
+            <form method="post" th:action="@{/logout}"> <button type="submit" class="btn btn-outline-primary me-2" th:text="${@t.t('Logout')}"></button> </form>
+            <a th:href="@{/user}" class="btn btn-primary" th:text="${@t.t('Profil')}"></a>
         </div>
 
     </div>
@@ -52,24 +60,21 @@
         <!-- Sidebar links -->
         <nav class="col-2 bg-white border-end py-3" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
             <ul class="nav flex-column">
-                <li class="nav-item"><a class="nav-link" th:href="@{/home}">Startseite</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/anzeigen}">Nachhilfe</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/home}" th:text="${@t.t('Startseite')}"></a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/anzeigen}" th:text="${@t.t('Nachhilfe')}"></a></li>
                 <!-- Nur für Administratoren -->
                 <li class="nav-item" sec:authorize="hasAuthority('ROLE_ADMIN')">
-                    <a class="nav-link" th:href="@{/admin/verifications}">
-                        Verifizierungsanträge
+                    <a class="nav-link" th:href="@{/admin/verifications}" th:text="${@t.t('Verifizierungsanträge')}">
                     </a>
                 </li>
                 <li class="nav-item" sec:authorize="hasAuthority('ROLE_ADMIN')">
-                    <a class="nav-link" th:href="@{/admin/users}">
-                        Benutzer verwalten
+                    <a class="nav-link" th:href="@{/admin/users}" th:text="${@t.t('Benutzer verwalten')}">
                     </a>
                 </li>
 
                 <!-- Nur Lehrer -->
                 <li class="nav-item" sec:authorize="hasAuthority('ROLE_TEACHER')">
-                    <a class="nav-link" th:href="@{/anzeigen/neu}">
-                        Anzeige erstellen
+                    <a class="nav-link" th:href="@{/anzeigen/neu}" th:text="${@t.t('Anzeige erstellen')}">
                     </a>
                 </li>
             </ul>

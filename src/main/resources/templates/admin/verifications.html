@@ -6,14 +6,15 @@
 
 <div layout:fragment="content">
 
-<h1>Verifizierungsanträge</h1>
+    <h1 th:text="${@t.t('Verifizierungsanträge')}"></h1>
+
     <table>
         <tr>
-            <th>User</th>
-            <th>Rolle</th>
-            <th>Datum</th>
-            <th>Dokument</th>
-            <th>Aktion</th>
+            <th th:text="${@t.t('User')}"></th>
+            <th th:text="${@t.t('Rolle')}"></th>
+            <th th:text="${@t.t('Datum')}"></th>
+            <th th:text="${@t.t('Dokument')}"></th>
+            <th th:text="${@t.t('Aktion')}"></th>
         </tr>
 
         <tr th:each="req : ${requests}">
@@ -23,12 +24,12 @@
 
             <td>
                 <a th:if="${req.documentPath != null}"
-                   th:href="@{|/admin/verifications/${req.id}/document|}">
-                    Dokument ansehen
+                   th:href="@{|/admin/verifications/${req.id}/document|}"
+                   th:text="${@t.t('Dokument ansehen')}">
                 </a>
                 <span th:if="${req.documentPath == null}">
-                —
-            </span>
+                    —
+                </span>
             </td>
 
             <td>
@@ -36,10 +37,12 @@
                     <form th:action="@{|/admin/verifications/${req.id}/approve|}"
                           method="post"
                           th:csrf>
-                        <button type="submit" class="btn btn-primary">
-                            Annehmen
+                        <button type="submit"
+                                class="btn btn-primary"
+                                th:text="${@t.t('Annehmen')}">
                         </button>
                     </form>
+
                     <form th:action="@{|/admin/verifications/${req.id}/reject|}"
                           method="post"
                           th:csrf
@@ -47,13 +50,14 @@
 
                         <input type="text"
                                name="reason"
-                               placeholder="Ablehnungsgrund"
+                               th:placeholder="${@t.t('Ablehnungsgrund')}"
                                class="form-control form-control-sm"
                                style="width: 160px;"
                                required>
 
-                        <button type="submit" class="btn btn-warning">
-                            Ablehnen
+                        <button type="submit"
+                                class="btn btn-warning"
+                                th:text="${@t.t('Ablehnen')}">
                         </button>
                     </form>
                 </div>

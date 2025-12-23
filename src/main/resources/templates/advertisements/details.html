@@ -13,20 +13,20 @@
     <img th:if="${advertisement.imagePath != null}"
          th:src="@{/images/{file}(file=${advertisement.imagePath})}"
          class="img-fluid mb-3 rounded halb-bild"
-         alt="Bild zur Anzeige">
+         th:alt="${@t.t('Bild zur Anzeige')}">
 
     <p>
-        <strong>Fach:</strong>
+        <strong th:text="${@t.t('Fach:')}"></strong>
         <span th:text="${advertisement.subject.name}"></span>
     </p>
 
     <p>
-        <strong>Schulart:</strong>
+        <strong th:text="${@t.t('Schulart:')}"></strong>
         <span th:text="${advertisement.schoolType.name}"></span>
     </p>
 
     <p>
-        <strong>Preis:</strong>
+        <strong th:text="${@t.t('Preis:')}"></strong>
         <span th:text="${advertisement.price}"></span> €/h
     </p>
 
@@ -39,23 +39,25 @@
         <!-- Bearbeiten nur für Ersteller -->
         <a th:if="${istErsteller}"
            th:href="@{'/anzeigen/bearbeiten/' + ${advertisement.id}}"
-           class="btn btn-warning">
-            Bearbeiten
+           class="btn btn-warning"
+           th:text="${@t.t('Bearbeiten')}">
         </a>
 
         <!-- Buchen -->
-        <a sec:authorize="hasRole('STUDENT')" th:href="@{/anzeigen/{id}/buchen(id=${advertisement.id})}"
-           class="btn btn-primary">
-            Buchen
+        <a sec:authorize="hasRole('STUDENT')"
+           th:href="@{/anzeigen/{id}/buchen(id=${advertisement.id})}"
+           class="btn btn-primary"
+           th:text="${@t.t('Buchen')}">
         </a>
 
         <!-- Zurück -->
         <a th:href="@{/anzeigen}"
-           class="btn btn-secondary">
-            Zurück zur Übersicht
+           class="btn btn-secondary"
+           th:text="${@t.t('Zurück zur Übersicht')}">
         </a>
 
     </div>
 </main>
+
 </body>
 </html>

@@ -3,14 +3,13 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{layout}">
-
 <main layout:fragment="content">
 
-    <h1 class="mb-4">Meine Verfügbarkeit</h1>
+    <h1 class="mb-4" th:text="${@t.t('Meine Verfügbarkeit')}"></h1>
 
     <!-- Formular zur Eingabe -->
     <div class="card mb-4">
-        <div class="card-header">Verfügbarkeit hinzufügen</div>
+        <div class="card-header" th:text="${@t.t('Verfügbarkeit hinzufügen')}"></div>
 
         <div class="card-body">
             <form th:action="@{/lehrer/{id}/verfuegbarkeit(id=${userId})}"
@@ -19,47 +18,53 @@
 
                 <div class="row mb-3">
                     <div class="col">
-                        <label for="wochentag" class="form-label">Wochentag</label>
+                        <label for="wochentag" class="form-label"
+                               th:text="${@t.t('Wochentag')}"></label>
                         <select th:field="*{weekday}" id="wochentag" class="form-select">
-                            <option value="1">Montag</option>
-                            <option value="2">Dienstag</option>
-                            <option value="3">Mittwoch</option>
-                            <option value="4">Donnerstag</option>
-                            <option value="5">Freitag</option>
-                            <option value="6">Samstag</option>
-                            <option value="7">Sonntag</option>
+                            <option value="1" th:text="${@t.t('Montag')}"></option>
+                            <option value="2" th:text="${@t.t('Dienstag')}"></option>
+                            <option value="3" th:text="${@t.t('Mittwoch')}"></option>
+                            <option value="4" th:text="${@t.t('Donnerstag')}"></option>
+                            <option value="5" th:text="${@t.t('Freitag')}"></option>
+                            <option value="6" th:text="${@t.t('Samstag')}"></option>
+                            <option value="7" th:text="${@t.t('Sonntag')}"></option>
                         </select>
                     </div>
 
                     <div class="col">
-                        <label for="startZeit" class="form-label">Startzeit</label>
-                        <input type="time" th:field="*{startTime}" id="startZeit" class="form-control" required>
+                        <label for="startZeit" class="form-label"
+                               th:text="${@t.t('Startzeit')}"></label>
+                        <input type="time" th:field="*{startTime}" id="startZeit"
+                               class="form-control" required>
                     </div>
 
                     <div class="col">
-                        <label for="endZeit" class="form-label">Endzeit</label>
-                        <input type="time" th:field="*{endTime}" id="endZeit" class="form-control" required>
+                        <label for="endZeit" class="form-label"
+                               th:text="${@t.t('Endzeit')}"></label>
+                        <input type="time" th:field="*{endTime}" id="endZeit"
+                               class="form-control" required>
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Hinzufügen</button>
+                <button type="submit" class="btn btn-primary"
+                        th:text="${@t.t('Hinzufügen')}"></button>
             </form>
         </div>
     </div>
 
     <!-- Tabelle mit bestehender Verfügbarkeit -->
     <div class="card">
-        <div class="card-header">Einträge</div>
+        <div class="card-header" th:text="${@t.t('Einträge')}"></div>
 
         <div class="card-body">
             <table class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Wochentag</th>
-                    <th>Start</th>
-                    <th>Ende</th>
-                    <th>Aktionen</th>
+                    <th th:text="${@t.t('ID')}"></th>
+                    <th th:text="${@t.t('Wochentag')}"></th>
+                    <th th:text="${@t.t('Start')}"></th>
+                    <th th:text="${@t.t('Ende')}"></th>
+                    <th th:text="${@t.t('Aktionen')}"></th>
                 </tr>
                 </thead>
 
@@ -67,28 +72,28 @@
                 <tr th:each="v : ${verfuegbarkeitList}">
                     <td th:text="${v.id}"></td>
                     <td th:switch="${v.weekday}">
-                        <span th:case="1">Mo</span>
-                        <span th:case="2">Di</span>
-                        <span th:case="3">Mi</span>
-                        <span th:case="4">Do</span>
-                        <span th:case="5">Fr</span>
-                        <span th:case="6">Sa</span>
-                        <span th:case="7">So</span>
-                        <span th:case="*">?</span>
+                        <span th:case="1" th:text="${@t.t('Mo')}"></span>
+                        <span th:case="2" th:text="${@t.t('Di')}"></span>
+                        <span th:case="3" th:text="${@t.t('Mi')}"></span>
+                        <span th:case="4" th:text="${@t.t('Do')}"></span>
+                        <span th:case="5" th:text="${@t.t('Fr')}"></span>
+                        <span th:case="6" th:text="${@t.t('Sa')}"></span>
+                        <span th:case="7" th:text="${@t.t('So')}"></span>
+                        <span th:case="*" th:text="${@t.t('?')}"></span>
                     </td>
                     <td th:text="${v.startTime}"></td>
                     <td th:text="${v.endTime}"></td>
                     <td>
                         <form th:action="@{/lehrer/{u}/verfuegbarkeit/delete/{id}(u=${userId}, id=${v.id})}"
                               method="post" class="d-inline">
-                            <button type="submit" class="btn btn-danger btn-sm">
-                                Löschen
-                            </button>
+                            <button type="submit" class="btn btn-danger btn-sm"
+                                    th:text="${@t.t('Löschen')}"></button>
                         </form>
                         <form th:action="@{/lehrer/{u}/verfuegbarkeit(u=${userId})}"
                               method="get" class="d-inline">
                             <input type="hidden" name="edit" th:value="${v.id}" />
-                            <button type="submit" class="btn btn-warning btn-sm">Bearbeiten</button>
+                            <button type="submit" class="btn btn-warning btn-sm"
+                                    th:text="${@t.t('Bearbeiten')}"></button>
                         </form>
 
                     </td>
@@ -100,30 +105,38 @@
 
                             <div class="row">
                                 <div class="col">
-                                    <label class="form-label">Wochentag</label>
+                                    <label class="form-label"
+                                           th:text="${@t.t('Wochentag')}"></label>
                                     <select name="weekday" class="form-select">
-                                        <option value="1">Mo</option>
-                                        <option value="2">Di</option>
-                                        <option value="3">Mi</option>
-                                        <option value="4">Do</option>
-                                        <option value="5">Fr</option>
-                                        <option value="6">Sa</option>
-                                        <option value="7">So</option>
+                                        <option value="1" th:text="${@t.t('Mo')}"></option>
+                                        <option value="2" th:text="${@t.t('Di')}"></option>
+                                        <option value="3" th:text="${@t.t('Mi')}"></option>
+                                        <option value="4" th:text="${@t.t('Do')}"></option>
+                                        <option value="5" th:text="${@t.t('Fr')}"></option>
+                                        <option value="6" th:text="${@t.t('Sa')}"></option>
+                                        <option value="7" th:text="${@t.t('So')}"></option>
                                     </select>
                                 </div>
 
                                 <div class="col">
-                                    <label class="form-label">Startzeit</label>
-                                    <input type="time" name="startTime" th:value="${v.startTime}" class="form-control">
+                                    <label class="form-label"
+                                           th:text="${@t.t('Startzeit')}"></label>
+                                    <input type="time" name="startTime"
+                                           th:value="${v.startTime}"
+                                           class="form-control">
                                 </div>
 
                                 <div class="col">
-                                    <label class="form-label">Endzeit</label>
-                                    <input type="time" name="endTime" th:value="${v.endTime}" class="form-control">
+                                    <label class="form-label"
+                                           th:text="${@t.t('Endzeit')}"></label>
+                                    <input type="time" name="endTime"
+                                           th:value="${v.endTime}"
+                                           class="form-control">
                                 </div>
 
                                 <div class="col">
-                                    <button class="btn btn-success mt-4" type="submit">Speichern</button>
+                                    <button class="btn btn-success mt-4" type="submit"
+                                            th:text="${@t.t('Speichern')}"></button>
                                 </div>
                             </div>
 
@@ -137,6 +150,3 @@
     </div>
 
 </main>
-
-
-</html>

@@ -7,37 +7,43 @@
 
 <main layout:fragment="content">
 
-    <h1 class="mb-4">Neue Nachhilfe-Anzeige erstellen</h1>
+    <h1 class="mb-4" th:text="${@t.t('Neue Nachhilfe-Anzeige erstellen')}"></h1>
 
     <form th:action="@{/anzeigen/neu}" method="post" enctype="multipart/form-data" class="row gy-3">
 
         <div class="col-12">
-            <label class="form-label fw-semibold">Bild hochladen (optional)(max 5mb)</label>
+            <label class="form-label fw-semibold"
+                   th:text="${@t.t('Bild hochladen (optional)(max 5mb)')}"></label>
             <input type="file" name="bild" class="form-control" accept="image/*">
         </div>
 
         <div class="col-12">
-            <label class="form-label fw-semibold">Titel</label>
+            <label class="form-label fw-semibold"
+                   th:text="${@t.t('Titel')}"></label>
             <input type="text" name="titel" class="form-control"
-                   placeholder="z.B. Mathe Nachhilfe für 7.-10. Klasse" required>
+                   th:placeholder="${@t.t('z.B. Mathe Nachhilfe für 7.-10. Klasse')}" required>
         </div>
 
         <div class="col-12">
-            <label class="form-label fw-semibold">Beschreibung</label>
+            <label class="form-label fw-semibold"
+                   th:text="${@t.t('Beschreibung')}"></label>
             <textarea name="beschreibung" class="form-control" rows="4"
-                      placeholder="Beschreibe deine Nachhilfe..." required></textarea>
+                      th:placeholder="${@t.t('Beschreibe deine Nachhilfe...')}" required></textarea>
         </div>
 
         <div class="col-md-6">
-            <label class="form-label fw-semibold">Fach</label>
+            <label class="form-label fw-semibold"
+                   th:text="${@t.t('Fach')}"></label>
             <input type="text" name="fach" class="form-control"
-                   placeholder="z.B. Mathe, Englisch, Biologie" required>
+                   th:placeholder="${@t.t('z.B. Mathe, Englisch, Biologie')}" required>
         </div>
 
         <div class="col-md-6">
-            <label class="form-label fw-semibold">Schulart</label>
+            <label class="form-label fw-semibold"
+                   th:text="${@t.t('Schulart')}"></label>
             <select name="schulartId" class="form-select" required>
-                <option value="" disabled selected>Bitte wählen…</option>
+                <option value="" disabled selected
+                        th:text="${@t.t('Bitte wählen…')}"></option>
                 <option th:each="s : ${schularten}"
                         th:value="${s.id}"
                         th:text="${s.name}">
@@ -47,18 +53,20 @@
         </div>
 
         <div class="col-md-6">
-            <label class="form-label fw-semibold">Preis pro Stunde (€)</label>
+            <label class="form-label fw-semibold"
+                   th:text="${@t.t('Preis pro Stunde (€)')}"></label>
             <input type="number" name="preis" class="form-control"
-                   placeholder="z.B. 15" min="1" step="1" required>
+                   th:placeholder="${@t.t('z.B. 15')}" min="1" step="1" required>
         </div>
 
         <div class="col-12">
-            <button type="submit" class="btn btn-primary">
-                Anzeige erstellen
+            <button type="submit" class="btn btn-primary"
+                    th:text="${@t.t('Anzeige erstellen')}">
             </button>
         </div>
 
     </form>
 
 </main>
+
 </html>

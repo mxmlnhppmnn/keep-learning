@@ -17,7 +17,8 @@
                     <p class="card-text">
                         <span th:text="${slot.start}"></span>
                         -
-                        <span th:text="${slot.end}"></span> Uhr
+                        <span th:text="${slot.end}"></span>
+                        <span th:text="${@t.t('Uhr')}"></span>
                     </p>
 
                     <div class="d-flex gap-2">
@@ -29,8 +30,8 @@
                                    date=${slot.date},
                                    start=${slot.start},
                                    trialLesson=${false}
-                           )}">
-                            Buchen
+                           )}"
+                           th:text="${@t.t('Buchen')}">
                         </a>
 
                         <!-- Probestunde -->
@@ -40,8 +41,8 @@
                                    date=${slot.date},
                                    start=${slot.start},
                                    trialLesson=${true}
-                           )}">
-                            Probestunde buchen
+                           )}"
+                           th:text="${@t.t('Probestunde buchen')}">
                         </a>
 
                     </div>
@@ -51,7 +52,9 @@
         </div>
     </div>
 
-    <a th:href="@{/anzeigen}" class="btn btn-secondary mt-3">Zurück zur Übersicht</a>
+    <a th:href="@{/anzeigen}"
+       class="btn btn-secondary mt-3"
+       th:text="${@t.t('Zurück zur Übersicht')}"></a>
 
 </div>
 

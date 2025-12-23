@@ -7,7 +7,7 @@
 
 <main layout:fragment="content">
 
-    <h1 class="mb-4">Anzeige bearbeiten</h1>
+    <h1 class="mb-4" th:text="${@t.t('Anzeige bearbeiten')}"></h1>
 
     <form th:action="@{/anzeigen/bearbeiten/{id}(id=${advertisement.id})}"
           method="post"
@@ -16,14 +16,16 @@
           class="row gy-3">
 
         <div class="col-12">
-            <label class="form-label fw-semibold">Titel</label>
+            <label class="form-label fw-semibold"
+                   th:text="${@t.t('Titel')}"></label>
             <input type="text" name="titel"
                    class="form-control"
                    th:value="${advertisement.title}" required>
         </div>
 
         <div class="col-12">
-            <label class="form-label fw-semibold">Beschreibung</label>
+            <label class="form-label fw-semibold"
+                   th:text="${@t.t('Beschreibung')}"></label>
             <textarea name="beschreibung"
                       class="form-control"
                       rows="4"
@@ -32,7 +34,8 @@
         </div>
 
         <div class="col-md-6">
-            <label class="form-label fw-semibold">Fach</label>
+            <label class="form-label fw-semibold"
+                   th:text="${@t.t('Fach')}"></label>
             <input type="text"
                    name="subject"
                    class="form-control"
@@ -40,16 +43,21 @@
         </div>
 
         <div class="col-md-6">
-            <label class="form-label fw-semibold">Schulart</label>
+            <label class="form-label fw-semibold"
+                   th:text="${@t.t('Schulart')}"></label>
             <select name="schoolType" class="form-select" required>
-                <option th:selected="${advertisement.schoolType.name == 'Grundschule'}">Grundschule</option>
-                <option th:selected="${advertisement.schoolType.name == 'Realschule'}">Realschule</option>
-                <option th:selected="${advertisement.schoolType.name == 'Gymnasium'}">Gymnasium</option>
+                <option th:selected="${advertisement.schoolType.name == 'Grundschule'}"
+                        th:text="${@t.t('Grundschule')}"></option>
+                <option th:selected="${advertisement.schoolType.name == 'Realschule'}"
+                        th:text="${@t.t('Realschule')}"></option>
+                <option th:selected="${advertisement.schoolType.name == 'Gymnasium'}"
+                        th:text="${@t.t('Gymnasium')}"></option>
             </select>
         </div>
 
         <div class="col-md-6">
-            <label class="form-label fw-semibold">Preis pro Stunde (€)</label>
+            <label class="form-label fw-semibold"
+                   th:text="${@t.t('Preis pro Stunde (€)')}"></label>
             <input type="number"
                    name="preis"
                    class="form-control"
@@ -59,7 +67,8 @@
         </div>
 
         <div class="col-12">
-            <label class="form-label fw-semibold">Bild ändern (optional)(max 5mb)</label>
+            <label class="form-label fw-semibold"
+                   th:text="${@t.t('Bild ändern (optional)(max 5mb)')}"></label>
             <input type="file" name="bild" class="form-control" accept="image/*">
         </div>
 
@@ -69,22 +78,25 @@
 
         <button type="submit"
                 form="bearbeitenForm"
-                class="btn btn-primary">
-            Änderungen speichern
+                class="btn btn-primary"
+                th:text="${@t.t('Änderungen speichern')}">
         </button>
 
         <a th:href="@{'/anzeigen/' + ${advertisement.id}}"
-           class="btn btn-secondary ms-2">
-            Abbrechen
+           class="btn btn-secondary ms-2"
+           th:text="${@t.t('Abbrechen')}">
         </a>
 
         <form th:action="@{/anzeigen/loeschen/{id}(id=${advertisement.id})}"
               method="post"
               class="ms-auto">
-            <button type="submit" class="btn btn-danger">Löschen</button>
+            <button type="submit"
+                    class="btn btn-danger"
+                    th:text="${@t.t('Löschen')}"></button>
         </form>
 
     </div>
 
 </main>
+
 </html>

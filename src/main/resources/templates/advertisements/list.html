@@ -6,17 +6,16 @@
       layout:decorate="~{layout}">
 
 <main layout:fragment="content">
-    <h1 class="mb-4" th:if="${suchbegriff == null}">
-        Alle Anzeigen
-    </h1>
-
+    <h1 class="mb-4" th:if="${suchbegriff == null}"
+        th:text="${@t.t('Alle Anzeigen')}"></h1>
 
     <p th:if="${suchbegriff}">
-        Suchergebnisse für "<span th:text="${suchbegriff}"></span>"
+        <span th:text="${@t.t('Suchergebnisse für')}"></span>
+        "<span th:text="${suchbegriff}"></span>"
     </p>
 
     <div th:if="${anzeigen.isEmpty()}">
-        <p>Keine Anzeigen gefunden.</p>
+        <p th:text="${@t.t('Keine Anzeigen gefunden.')}"></p>
     </div>
 
     <div th:each="advertisement : ${anzeigen}">
@@ -27,13 +26,12 @@
         <p th:text="${advertisement.description}"></p>
 
         <p>
-            <strong>Preis:</strong>
+            <strong th:text="${@t.t('Preis:')}"></strong>
             <span th:text="${advertisement.price}"></span> €
         </p>
 
         <hr>
     </div>
-
 </main>
 
 </html>

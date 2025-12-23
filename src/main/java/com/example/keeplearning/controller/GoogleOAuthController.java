@@ -73,10 +73,10 @@ public class GoogleOAuthController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return "redirect:/user/?google=error";
+            return "redirect:/user?google=error";
         }
 
-        return "redirect:/user/?google=ok";
+        return "redirect:/user?google=ok";
     }
 }
 

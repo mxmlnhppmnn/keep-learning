@@ -4,8 +4,8 @@
       layout:decorate="~{layout}">
 <main layout:fragment="content">
     <div th:each="line: ${lines}">
-        <p th:text="${line}"\>
-        </div>
+        <p th:text="${line}"></p>
+    </div>
 
     <div th:if="${googleMessage}" class="alert alert-info">
         <span th:text="${googleMessage}"></span>
@@ -17,67 +17,76 @@
         <a sec:authorize="hasRole('TEACHER')"
            th:if="${!googleConnected}"
            th:href="@{/google/oauth/connect(userId=${user.id})}"
-           class="btn btn-primary">
-            Mit Google Calendar verbinden
+           class="btn btn-primary"
+           th:text="${@t.t('Mit Google Calendar verbinden')}">
         </a>
 
         <!-- Wenn verbunden -->
         <div th:if="${googleConnected}">
-            <span class="badge bg-success">Google Calendar verbunden ✓</span>
+            <span class="badge bg-success"
+                  th:text="${@t.t('Google Calendar verbunden ✓')}"></span>
 
             <a th:href="@{/google/oauth/connect(userId=${user.id})}"
-               class="btn btn-outline-primary ms-2">
-                Erneut verbinden
+               class="btn btn-outline-primary ms-2"
+               th:text="${@t.t('Erneut verbinden')}">
             </a>
         </div>
+
         <hr sec:authorize="hasRole('TEACHER')">
-        <h3 sec:authorize="hasRole('TEACHER')">Gib an, wann du Zeit hast zu Unterrichten!</h3>
+
+        <h3 sec:authorize="hasRole('TEACHER')"
+            th:text="${@t.t('Gib an, wann du Zeit hast zu unterrichten!')}">
+        </h3>
+
         <a sec:authorize="hasRole('TEACHER')"
            th:href="@{/lehrer/{id}/verfuegbarkeit(id=${#authentication.principal.id})}"
-           class="btn btn-primary">
-            Verfügbarkeit verwalten
+           class="btn btn-primary"
+           th:text="${@t.t('Verfügbarkeit verwalten')}">
         </a>
     </div>
 
     <hr>
-    <h3>Verifizierung</h3>
 
-    <!-- antrag stellen -->
+    <h3 th:text="${@t.t('Verifizierung')}"></h3>
+
+    <!-- Antrag stellen -->
     <div th:if="${!user.verified and !hasPending}">
         <form th:action="@{/user/verification}"
               method="post"
               enctype="multipart/form-data"
               th:csrf>
 
-            <label>Nachweis (PDF oder Bild):</label>
+            <label th:text="${@t.t('Nachweis (PDF oder Bild):')}"></label>
             <input type="file" name="document" required>
 
-            <button type="submit" class="btn btn-primary">
-                Jetzt verifizieren
+            <button type="submit"
+                    class="btn btn-primary"
+                    th:text="${@t.t('Jetzt verifizieren')}">
             </button>
         </form>
     </div>
 
     <!-- verifiziert -->
     <div th:if="${user.verified}">
-        <p>Dein Account ist verifiziert.</p>
+        <p th:text="${@t.t('Dein Account ist verifiziert.')}"></p>
     </div>
 
-    <!-- antrag läuft -->
+    <!-- Antrag läuft -->
     <div th:if="${!user.verified and hasPending}">
-        <p>Dein Verifizierungsantrag wird geprüft.</p>
+        <p th:text="${@t.t('Dein Verifizierungsantrag wird geprüft.')}"></p>
     </div>
 
-    <!-- Abgelehnt (nur wenn kein neuer antrag pending ist)) -->
+    <!-- Abgelehnt -->
     <div th:if="${!user.verified and !hasPending and rejectedRequest != null}">
-        <p style="color: red;">
-            Dein Verifizierungsantrag wurde abgelehnt.
+        <p style="color: red;"
+           th:text="${@t.t('Dein Verifizierungsantrag wurde abgelehnt.')}">
         </p>
         <p>
-            <strong>Grund:</strong>
+            <strong th:text="${@t.t('Grund:')}"></strong>
             <span th:text="${rejectedRequest.rejectionReason}"></span>
         </p>
     </div>
 
 </main>
+
 </html>
