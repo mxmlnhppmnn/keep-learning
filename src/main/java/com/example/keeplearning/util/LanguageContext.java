@@ -1,5 +1,6 @@
 package com.example.keeplearning.util;
 
+//hält die aktuelle Sprache während eines requests bereit
 public class LanguageContext {
 
     private static final ThreadLocal<String> CURRENT_LANGUAGE =

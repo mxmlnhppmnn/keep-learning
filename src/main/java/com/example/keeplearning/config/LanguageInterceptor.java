@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+//sorgt dafür, dass jeder Request eine Sprache hat
 @Component
 public class LanguageInterceptor implements HandlerInterceptor {
 
@@ -21,7 +22,7 @@ public class LanguageInterceptor implements HandlerInterceptor {
                              HttpServletResponse response,
                              Object handler) {
 
-        // Sprache ermitteln + im Context setzen
+        // Sprache ermitteln und im Context setzen
         languageResolver.resolve(request);
         return true;
     }
@@ -32,7 +33,8 @@ public class LanguageInterceptor implements HandlerInterceptor {
                                 Object handler,
                                 Exception ex) {
 
-        // WICHTIG: ThreadLocal aufräumen
+        //ThreadLocal aufräumen
+        //da sonst unerwartet die falsche Sprache aus einem vorherigen Request angezeigt werden könnte
         LanguageContext.clear();
     }
 }

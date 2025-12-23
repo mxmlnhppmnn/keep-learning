@@ -13,6 +13,7 @@ public class TranslationHelper {
 
     private final DeepLTranslationService translationService;
 
+    //Cache für Wörter, die bereits schonmal übersetzt wurden, um nicht zu viele requests an DeepL zu senden
     private final Map<String, String> cache = new ConcurrentHashMap<>();
 
     public TranslationHelper(DeepLTranslationService translationService) {
@@ -23,12 +24,12 @@ public class TranslationHelper {
         String lang = LanguageContext.getLanguage(); // DE / EN / FR
         String key = lang + "|" + text;
 
-        // ✅ Cache-Hit
+        // im Cache gefunden
         if (cache.containsKey(key)) {
             return cache.get(key);
         }
 
-        // ❌ Kein Cache → DeepL aufrufen
+        // nicht im cache gefunden -> bei DeepL anfragen
         String translated = translationService.translate(text, lang);
 
         cache.put(key, translated);

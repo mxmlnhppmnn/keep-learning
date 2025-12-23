@@ -13,6 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
         this.languageInterceptor = languageInterceptor;
     }
 
+    //registriert den language interceptor global
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(languageInterceptor);

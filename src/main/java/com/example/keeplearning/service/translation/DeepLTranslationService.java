@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.Map;
 
+//kommuniziert  mit der API
 @Service
 public class DeepLTranslationService {
 
@@ -31,7 +32,7 @@ public class DeepLTranslationService {
 
         String url = "https://api-free.deepl.com/v2/translate";
 
-        // 👇 FORM-DATEN statt JSON
+        // form-Daten statt JSON
         MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
         form.add("auth_key", apiKey);
         form.add("text", text);
@@ -41,15 +42,14 @@ public class DeepLTranslationService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        HttpEntity<MultiValueMap<String, String>> request =
-                new HttpEntity<>(form, headers);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(form, headers);
 
-        Map response =
-                restTemplate.postForObject(url, request, Map.class);
+        //Antwort von DeepL
 
-        List<Map<String, String>> translations =
-                (List<Map<String, String>>) response.get("translations");
+        Map response = restTemplate.postForObject(url, request, Map.class);
 
-        return translations.get(0).get("text");
+        List<Map<String, String>> translations = (List<Map<String, String>>) response.get("translations");
+
+        return translations.get(0).get("text"); //wir senden immer nur einen wert per request
     }
 }

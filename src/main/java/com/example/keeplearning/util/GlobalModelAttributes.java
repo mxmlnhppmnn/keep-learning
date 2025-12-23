@@ -3,6 +3,7 @@ package com.example.keeplearning.util;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
+//damit lang auch in kombination mit z.B. query möglich ist
 @ControllerAdvice
 public class GlobalModelAttributes {
 

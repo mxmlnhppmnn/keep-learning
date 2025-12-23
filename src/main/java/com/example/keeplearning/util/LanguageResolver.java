@@ -3,6 +3,7 @@ package com.example.keeplearning.util;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 
+//gibt an, welche Sprache für den akt. Request gilt
 @Component
 public class LanguageResolver {
 
