@@ -6,6 +6,7 @@
       layout:decorate="~{layout}">
 
 <main layout:fragment="content">
+
     <h1 class="mb-4" th:if="${suchbegriff == null}"
         th:text="${@t.t('Alle Anzeigen')}"></h1>
 
@@ -13,6 +14,26 @@
         <span th:text="${@t.t('Suchergebnisse für')}"></span>
         "<span th:text="${suchbegriff}"></span>"
     </p>
+
+    <!-- SORTIERUNG (ORDER BY) -->
+    <form method="get" th:action="@{/anzeigen/suche}" class="mb-3" th:if="${suchbegriff != null}">
+        <input type="hidden" name="q" th:value="${suchbegriff}"/>
+
+        <select name="sort" onchange="this.form.submit()">
+            <option value="price,asc"
+                    th:selected="${sort == 'price,asc'}">
+                Preis aufsteigend
+            </option>
+            <option value="price,desc"
+                    th:selected="${sort == 'price,desc'}">
+                Preis absteigend
+            </option>
+            <option value="title,asc"
+                    th:selected="${sort == 'title,asc'}">
+                Titel A–Z
+            </option>
+        </select>
+    </form>
 
     <div th:if="${anzeigen.isEmpty()}">
         <p th:text="${@t.t('Keine Anzeigen gefunden.')}"></p>
@@ -32,7 +53,20 @@
 
         <hr>
     </div>
+
+    <!-- PAGINATION -->
+    <nav th:if="${totalPages > 1}">
+        <ul class="pagination">
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                th:classappend="${i == currentPage} ? 'active'">
+                <a class="page-link"
+                   th:href="@{/anzeigen/suche(q=${suchbegriff}, page=${i}, sort=${sort})}"
+                   th:text="${i + 1}">
+                </a>
+            </li>
+        </ul>
+    </nav>
+
 </main>
-
 </html>
-

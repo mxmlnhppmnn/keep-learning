@@ -10,6 +10,10 @@ import com.example.keeplearning.entity.Subject;
 import com.example.keeplearning.service.TimeslotService;
 import com.example.keeplearning.repository.SchoolTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -89,7 +93,7 @@ public class AdvertisementController {
         return "advertisements/edit";
     }
 
-    @GetMapping("/suche")
+    /*@GetMapping("/suche")
     public String searchAdvertisements(@RequestParam("q") String query, Model model){
         // Bei leerer Suche alle Anzeigen anzeigen
         if (query == null || query.trim().isEmpty()){
@@ -103,7 +107,42 @@ public class AdvertisementController {
         model.addAttribute("suchbegriff", query);
 
         return "advertisements/list";
+    }*/
+
+    @GetMapping("/suche")
+    public String searchAdvertisements(
+            @RequestParam(required = false) String q,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "3") int size,
+            @RequestParam(defaultValue = "title,asc") String sort,
+            Model model
+    ) {
+        String[] sortParams = sort.split(",");
+        Sort sorting = Sort.by(
+                Sort.Direction.fromString(sortParams[1]),
+                sortParams[0]
+        );
+
+        Pageable pageable = PageRequest.of(page, size, sorting);
+
+        Page<Advertisement> results;
+
+        if (q == null || q.trim().isEmpty()) {
+            results = advertisementRepository.findAll(pageable);
+        } else {
+            results = advertisementRepository
+                    .findByTitleContainingIgnoreCase(q, pageable);
+        }
+
+        model.addAttribute("anzeigen", results.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", results.getTotalPages());
+        model.addAttribute("suchbegriff", q);
+        model.addAttribute("sort", sort);
+
+        return "advertisements/list";
     }
+
 
     // ab hier die PostMappings
 
