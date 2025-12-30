@@ -93,22 +93,6 @@ public class AdvertisementController {
         return "advertisements/edit";
     }
 
-    /*@GetMapping("/suche")
-    public String searchAdvertisements(@RequestParam("q") String query, Model model){
-        // Bei leerer Suche alle Anzeigen anzeigen
-        if (query == null || query.trim().isEmpty()){
-            model.addAttribute("anzeigen", advertisementRepository.findAll());
-            return "advertisements/list";
-        }
-
-        List<Advertisement> results = advertisementRepository.searchAll(query);
-
-        model.addAttribute("anzeigen", results);
-        model.addAttribute("suchbegriff", query);
-
-        return "advertisements/list";
-    }*/
-
     @GetMapping("/suche")
     public String searchAdvertisements(
             @RequestParam(required = false) String q,

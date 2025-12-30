@@ -15,7 +15,7 @@
         "<span th:text="${suchbegriff}"></span>"
     </p>
 
-    <!-- SORTIERUNG (ORDER BY) -->
+    <!-- parameter nach denen sortiert werden soll -->
     <form method="get" th:action="@{/anzeigen/suche}" class="mb-3" th:if="${suchbegriff != null}">
         <input type="hidden" name="q" th:value="${suchbegriff}"/>
 
@@ -54,7 +54,7 @@
         <hr>
     </div>
 
-    <!-- PAGINATION -->
+    <!-- pagination -->
     <nav th:if="${totalPages > 1}">
         <ul class="pagination">
             <li class="page-item"
