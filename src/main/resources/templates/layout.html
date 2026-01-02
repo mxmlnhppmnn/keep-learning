@@ -76,6 +76,11 @@
                     <a class="nav-link" th:href="@{/anzeigen/neu}" th:text="${@t.t('Anzeige erstellen')}">
                     </a>
                 </li>
+                <!-- Nur Schüler -->
+                <li class="nav-item" sec:authorize="hasAuthority('ROLE_STUDENT')">
+                    <a class="nav-link" th:href="@{/favoriten}" th:text="${@t.t('Favoriten')}">
+                    </a>
+                </li>
             </ul>
         </nav>
 

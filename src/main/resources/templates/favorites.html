@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+<div layout:fragment="content">
+    <h1>Meine Favoriten</h1>
+
+    <!-- falls der user noch keine favoriten hat -->
+    <div th:if="${#lists.isEmpty(favorites)}"
+         class="alert alert-info mt-3">
+        Du hast noch keine Favoriten gespeichert.
+    </div>
+
+    <!-- liste der favoriten -->
+    <div class="row mt-3" th:if="${!#lists.isEmpty(favorites)}">
+
+        <div class="col-md-4 mb-3"
+             th:each="ad : ${favorites}">
+            <div class="card h-100">
+                <img th:if="${ad.imagePath != null}"
+                     th:src="@{/images/{file}(file=${ad.imagePath})}"
+                     class="card-img-top"
+                     alt="Anzeige Bild">
+
+                <div class="card-body">
+                    <h5 class="card-title"
+                        th:text="${ad.title}">
+                        Titel
+                    </h5>
+
+                    <p class="card-text">
+                        <strong th:text="${ad.price}"></strong> € / Stunde
+                    </p>
+
+                    <a th:href="@{/anzeigen/{id}(id=${ad.id})}"
+                       class="btn btn-primary btn-sm">
+                        Zur Anzeige
+                    </a>
+
+                    <!-- Entfernen Button -->
+                    <form th:action="@{/favoriten/{id}/delete(id=${ad.id})}"
+                          method="post"
+                          class="d-inline">
+                        <button class="btn btn-outline-danger btn-sm">
+                            Entfernen
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</html>

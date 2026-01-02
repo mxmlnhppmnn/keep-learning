@@ -9,6 +9,7 @@ import com.example.keeplearning.repository.SubjectRepository;
 import com.example.keeplearning.entity.Subject;
 import com.example.keeplearning.service.TimeslotService;
 import com.example.keeplearning.repository.SchoolTypeRepository;
+import com.example.keeplearning.service.favorite.FavoriteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -47,6 +48,9 @@ public class AdvertisementController {
     @Autowired
     private TimeslotService timeslotService;
 
+    @Autowired
+    private FavoriteService favoriteService;
+
     @GetMapping
     public String listAdvertisements(Model model) {
         model.addAttribute("anzeigen", advertisementRepository.findAll());
@@ -70,9 +74,13 @@ public class AdvertisementController {
                 .orElseThrow(() -> new RuntimeException("Anzeige wurde nicht gefunden"));
 
         boolean isOwner = user != null && user.getId().equals(ad.getUser().getId());
-
+        boolean isFavorite = false;
+        if (user != null) {
+            isFavorite = favoriteService.isFavorite(user.getId(), id);
+        }
         model.addAttribute("advertisement", ad);
         model.addAttribute("istErsteller", isOwner);
+        model.addAttribute("isFavorite", isFavorite);
 
         return "advertisements/details";
     }

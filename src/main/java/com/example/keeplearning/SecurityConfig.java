@@ -32,6 +32,7 @@ public class SecurityConfig {
                         .requestMatchers("/lehrer/**").hasAuthority("VERIFIED")
                         .requestMatchers("/lehrer/**").hasRole("TEACHER")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/favoriten/**").hasRole("STUDENT")
                         .requestMatchers("/users/**").authenticated()
                         .anyRequest().permitAll()
                 )

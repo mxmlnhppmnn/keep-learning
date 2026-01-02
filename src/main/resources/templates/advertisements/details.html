@@ -10,6 +10,29 @@
 
     <h1 th:text="${advertisement.title}" class="mb-3"></h1>
 
+    <!-- Favoriten knopf für Schüler -->
+    <div sec:authorize="hasRole('STUDENT')">
+
+        <form th:if="${!isFavorite}"
+              th:action="@{/favoriten/{id}(id=${advertisement.id})}"
+              method="post"
+              class="d-inline">
+            <button type="submit" class="btn btn-outline-danger">
+                🤍 Favorit
+            </button>
+        </form>
+
+        <form th:if="${isFavorite}"
+              th:action="@{/favoriten/{id}/delete(id=${advertisement.id})}"
+              method="post"
+              class="d-inline">
+            <button type="submit" class="btn btn-danger">
+                ❤️ Favorit
+            </button>
+        </form>
+
+    </div>
+
     <img th:if="${advertisement.imagePath != null}"
          th:src="@{/images/{file}(file=${advertisement.imagePath})}"
          class="img-fluid mb-3 rounded halb-bild"
