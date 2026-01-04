@@ -4,12 +4,11 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{layout}">
 <div layout:fragment="content">
-    <h1>Meine Favoriten</h1>
+    <h1 th:text="${@t.t('Meine Favoriten')}"></h1>
 
     <!-- falls der user noch keine favoriten hat -->
     <div th:if="${#lists.isEmpty(favorites)}"
-         class="alert alert-info mt-3">
-        Du hast noch keine Favoriten gespeichert.
+         class="alert alert-info mt-3" th:text="${@t.t('Du hast noch keine Favoriten gespeichert')}">
     </div>
 
     <!-- liste der favoriten -->
@@ -34,16 +33,14 @@
                     </p>
 
                     <a th:href="@{/anzeigen/{id}(id=${ad.id})}"
-                       class="btn btn-primary btn-sm">
-                        Zur Anzeige
+                       class="btn btn-primary btn-sm" th:text="${@t.t('Zur Anzeige')}">
                     </a>
 
                     <!-- Entfernen Button -->
                     <form th:action="@{/favoriten/{id}/delete(id=${ad.id})}"
                           method="post"
                           class="d-inline">
-                        <button class="btn btn-outline-danger btn-sm">
-                            Entfernen
+                        <button class="btn btn-outline-danger btn-sm" th:text="${@t.t('Entfernen')}">
                         </button>
                     </form>
 

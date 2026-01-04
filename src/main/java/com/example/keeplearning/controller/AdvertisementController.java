@@ -10,6 +10,7 @@ import com.example.keeplearning.entity.Subject;
 import com.example.keeplearning.service.TimeslotService;
 import com.example.keeplearning.repository.SchoolTypeRepository;
 import com.example.keeplearning.service.favorite.FavoriteService;
+import com.example.keeplearning.service.similarAd.SimilarAdvertisementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -50,6 +51,8 @@ public class AdvertisementController {
 
     @Autowired
     private FavoriteService favoriteService;
+    @Autowired
+    private SimilarAdvertisementService similarAdvertisementService;
 
     @GetMapping
     public String listAdvertisements(Model model) {
@@ -78,6 +81,9 @@ public class AdvertisementController {
         if (user != null) {
             isFavorite = favoriteService.isFavorite(user.getId(), id);
         }
+        model.addAttribute("similarAdvertisements",
+                similarAdvertisementService.findSimilarAdvertisements(ad, 4)
+        ); //soll nur 4 ähnliche Anzeigen anzeigen
         model.addAttribute("advertisement", ad);
         model.addAttribute("istErsteller", isOwner);
         model.addAttribute("isFavorite", isFavorite);
@@ -94,8 +100,6 @@ public class AdvertisementController {
         if(!ad.getUser().getId().equals(user.getId())){
             return "redirect:/anzeigen";
         }
-
-
 
         model.addAttribute("advertisement", ad);
         return "advertisements/edit";

@@ -6,7 +6,7 @@
       layout:decorate="~{layout}">
 
 <body>
-<main layout:fragment="content">
+<div layout:fragment="content">
 
     <h1 th:text="${advertisement.title}" class="mb-3"></h1>
 
@@ -17,8 +17,7 @@
               th:action="@{/favoriten/{id}(id=${advertisement.id})}"
               method="post"
               class="d-inline">
-            <button type="submit" class="btn btn-outline-danger">
-                🤍 Favorit
+            <button type="submit" class="btn btn-outline-danger" th:text="${@t.t('🤍 Favorit')}">
             </button>
         </form>
 
@@ -26,8 +25,7 @@
               th:action="@{/favoriten/{id}/delete(id=${advertisement.id})}"
               method="post"
               class="d-inline">
-            <button type="submit" class="btn btn-danger">
-                ❤️ Favorit
+            <button type="submit" class="btn btn-danger" th:text="${@t.t('❤️ Favorit')}">
             </button>
         </form>
 
@@ -78,9 +76,40 @@
            class="btn btn-secondary"
            th:text="${@t.t('Zurück zur Übersicht')}">
         </a>
-
     </div>
-</main>
+    <!-- Ähnliche Anzeigen -->
+    <div class="mt-5"
+         th:if="${!#lists.isEmpty(similarAdvertisements)}">
+        <hr>
+        <h4 th:text="${@t.t('Ähnliche Anzeigen')}"></h4>
+
+        <div class="row mt-3">
+            <div class="col-md-3"
+                 th:each="ad : ${similarAdvertisements}">
+
+                <div class="card h-100">
+
+                    <img th:if="${ad.imagePath != null}"
+                         th:src="@{/images/{file}(file=${ad.imagePath})}"
+                         class="card-img-top"
+                         alt="Anzeige Bild">
+
+                    <div class="card-body">
+                        <h6 class="card-title"
+                            th:text="${ad.title}">
+                            Titel
+                        </h6>
+
+                        <a th:href="@{/anzeigen/{id}(id=${ad.id})}"
+                           class="btn btn-outline-primary btn-sm" th:text="${@t.t('Zur Anzeige')}">
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>

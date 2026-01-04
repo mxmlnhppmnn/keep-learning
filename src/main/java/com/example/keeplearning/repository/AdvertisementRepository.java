@@ -19,6 +19,8 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
             Double price,
             Pageable pageable
     );
+
+    //globale Suche
     @Query("""
         SELECT a FROM Advertisement a
         WHERE 
@@ -28,6 +30,22 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
             OR LOWER(a.schoolType.name) LIKE LOWER(CONCAT('%', :query, '%'))
     """)
     List<Advertisement> searchAll(@Param("query") String query);
+
+//Ähnliche Anzeigen, die den gleichen Schultyp und das gleiche Fach haben finden
+    //aktuelle Anzeige soll nicht vorgeschlagen werden
+    @Query("""
+        SELECT a
+        FROM Advertisement a
+        WHERE a.id <> :adId
+          AND a.subject.id = :subjectId
+          AND (:schoolTypeId IS NULL OR a.schoolType.id = :schoolTypeId)
+    """)
+    List<Advertisement> findSimilar(
+            @Param("adId") Long adId,
+            @Param("subjectId") Long subjectId,
+            @Param("schoolTypeId") Long schoolTypeId,
+            Pageable pageable
+    );
 
 
 }
