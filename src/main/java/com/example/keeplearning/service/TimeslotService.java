@@ -25,6 +25,7 @@ public class TimeslotService {
 
         // Alle Verfügbarkeiten des Lehrers laden
         List<TeacherAvailability> verfList = verfService.getAvailabilities(userId);
+        //hier werden die freien slots gesammelt
         List<Timeslot> result = new ArrayList<>();
 
 
@@ -33,10 +34,12 @@ public class TimeslotService {
         int slotMinutes = 60;
 
         // Für die nächsten 7 Tage Slots generieren
+        //iteriert über jeden Tag im Zeitraum
         for (LocalDate date = today; !date.isAfter(until); date = date.plusDays(1)) {
 
             int wochentag = date.getDayOfWeek().getValue(); // 1= mo, 2= di, ...
 
+            //jede verfügbarkeit des lehrers prüfen
             for (TeacherAvailability v : verfList) {
 
                 if (v.getWeekday() != wochentag)

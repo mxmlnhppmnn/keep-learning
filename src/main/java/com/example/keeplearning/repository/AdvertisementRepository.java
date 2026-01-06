@@ -14,14 +14,14 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
             Pageable pageable
     );
 
-    Page<Advertisement> findByTitleContainingIgnoreCaseAndPriceLessThanEqual(
+    /*Page<Advertisement> findByTitleContainingIgnoreCaseAndPriceLessThanEqual(
             String title,
             Double price,
             Pageable pageable
-    );
+    );*/
 
     //globale Suche
-    @Query("""
+    /*@Query("""
         SELECT a FROM Advertisement a
         WHERE 
             LOWER(a.title) LIKE LOWER(CONCAT('%', :query, '%'))
@@ -29,7 +29,8 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
             OR LOWER(a.subject.name) LIKE LOWER(CONCAT('%', :query, '%'))
             OR LOWER(a.schoolType.name) LIKE LOWER(CONCAT('%', :query, '%'))
     """)
-    List<Advertisement> searchAll(@Param("query") String query);
+
+    List<Advertisement> searchAll(@Param("query") String query);*/
 
 //Ähnliche Anzeigen, die den gleichen Schultyp und das gleiche Fach haben finden
     //aktuelle Anzeige soll nicht vorgeschlagen werden

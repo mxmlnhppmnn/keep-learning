@@ -64,14 +64,13 @@ public class AdvertisementController {
     @GetMapping("/neu")
     public String showCreateForm(Model model) {
         model.addAttribute("anzeige", new Advertisement());
-        List<SchoolType> alleSchularten = schoolTypeRepository.findAll(); // Schularten fürs Dropdown
+        //List<SchoolType> alleSchularten = schoolTypeRepository.findAll(); // Schularten fürs Dropdown
         model.addAttribute("schularten", schoolTypeRepository.findAll());
         return "advertisements/create";
     }
 
     @GetMapping("/{id}")
-    public String showAdvertisementDetails(@PathVariable Long id, Model model, @AuthenticationPrincipal User user,
-                                           Principal principal) {
+    public String showAdvertisementDetails(@PathVariable Long id, Model model, @AuthenticationPrincipal User user) {
 
         Advertisement ad = advertisementRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Anzeige wurde nicht gefunden"));
@@ -92,8 +91,7 @@ public class AdvertisementController {
     }
 
     @GetMapping("/bearbeiten/{id}")
-    public String showEditForm(@PathVariable Long id, Model model, @AuthenticationPrincipal User user,
-                               Principal principal){
+    public String showEditForm(@PathVariable Long id, Model model, @AuthenticationPrincipal User user){
         Advertisement ad = advertisementRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("Anzeige wurde nicht gefunden"));
 
@@ -140,8 +138,6 @@ public class AdvertisementController {
     }
 
 
-    // ab hier die PostMappings
-
     @PostMapping("/neu")
     public String createAdvertisement(
             @RequestParam("titel") String title,
@@ -150,8 +146,7 @@ public class AdvertisementController {
             @RequestParam("schulartId") long schoolTypeId,
             @RequestParam("preis") Double price,
             @RequestParam(value = "bild", required = false) MultipartFile image,
-            @AuthenticationPrincipal User user,
-            Principal principal
+            @AuthenticationPrincipal User user
     ) {
 
         // Fach suchen/neu anlegen
