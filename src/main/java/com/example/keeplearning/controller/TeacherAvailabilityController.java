@@ -2,6 +2,7 @@ package com.example.keeplearning.controller;
 
 
 import com.example.keeplearning.dto.AvailabilityRequest;
+import com.example.keeplearning.dto.AvailabilityUpdateRequest;
 import com.example.keeplearning.entity.TeacherAvailability;
 import com.example.keeplearning.service.TeacherAvailabilityService;
 import org.springframework.web.bind.annotation.*;
@@ -27,9 +28,14 @@ public class TeacherAvailabilityController {
         return service.create(userId, req);
     }
 
-    @DeleteMapping
-    public void deleteAvailability(@PathVariable Long userId, @PathVariable Long verfId){
-        service.delete(userId, verfId);
-
+    @PutMapping("/{verfId}")
+    public TeacherAvailability updateAvailability(@PathVariable Long userId, @PathVariable Long verfId, @RequestBody AvailabilityUpdateRequest request) {
+        return service.update(userId, verfId, request);
     }
+
+    @DeleteMapping("/{verfId}")
+    public void deleteAvailability(@PathVariable Long userId, @PathVariable Long verfId) {
+        service.delete(userId, verfId);
+    }
+
 }
