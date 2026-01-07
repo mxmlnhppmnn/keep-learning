@@ -266,7 +266,6 @@ public class AdvertisementController {
         var anzeige = advertisementRepository.findById(advertisementId)
                 .orElseThrow(() -> new IllegalArgumentException("Anzeige nicht gefunden"));
 
-        //Long userId = anzeige.getUserIdDeprecated();
         Long userId = anzeige.getUser().getId();
 
         var slots = timeslotService.generateTimeslotsForUser(userId);

@@ -47,7 +47,7 @@ public class GoogleOAuthController {
     @GetMapping("/callback")
     public String callback(
             @RequestParam String code,
-            @RequestParam String state
+            @RequestParam String state //enthält userId
     ) {
         Long userId = Long.valueOf(state);
 
