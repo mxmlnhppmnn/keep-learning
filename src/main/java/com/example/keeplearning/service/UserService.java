@@ -43,6 +43,14 @@ public class UserService implements UserDetailsService {
         return Optional.of(userRepository.save(user));
     }
 
+    public boolean saveUser(User user) {
+        if (!userRepository.existsById(user.getId())) {
+            return false;
+        }
+
+        userRepository.save(user);
+        return true;
+    }
 
     public Optional<User> getUser(Principal principal) {
         return getUserByEmail(principal.getName());
@@ -66,6 +74,18 @@ public class UserService implements UserDetailsService {
             user.getPassword(),
             user.getRole()
         );
+    }
+
+    public boolean isUserPassword(long userID, String password) {
+        return userRepository.findById(userID)
+                .map(user -> passwordEncoder.matches(password, user.getPassword()))
+                .orElse(false);
+    }
+
+    public void updatePassword(long userID, String newPassword) {
+        var user = userRepository.findById(userID).orElseThrow();
+        user.setPasswordEncoded(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 
     //UserDetails implementieren
