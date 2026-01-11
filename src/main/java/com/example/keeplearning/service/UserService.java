@@ -80,6 +80,7 @@ public class UserService implements UserDetailsService {
 
     }*/
 
+    //no usages weil es von spring security aufgerufen wird, nicht vom code
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email)
