@@ -90,16 +90,6 @@ public class UserService implements UserDetailsService {
 
     //UserDetails implementieren
 
-    /*@Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-
-        return userRepository.findByEmail(email)
-            .orElseThrow(
-                () -> new UsernameNotFoundException(String.format("No user with email '%s'", email))
-            );
-
-    }*/
-
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email)

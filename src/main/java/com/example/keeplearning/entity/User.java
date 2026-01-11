@@ -157,11 +157,6 @@ public class User implements UserDetails {
         return LocalDateTime.now().isBefore(lockedUntil);
     }
 
-    //soft delete nur, wird nicht wirklich aus der Tabelle gelöscht
-    public boolean isDeleted() {
-        return status == UserStatus.DELETED;
-    }
-
     @Override
     public boolean isAccountNonExpired() { return true; }
 
@@ -180,6 +175,7 @@ public class User implements UserDetails {
     @Override
     public boolean isCredentialsNonExpired() { return true; }
 
+    //soft delete, ist nicht wirklich aus Tabelle gelöscht
     @Override
     public boolean isEnabled() {
         return status != UserStatus.DELETED;
