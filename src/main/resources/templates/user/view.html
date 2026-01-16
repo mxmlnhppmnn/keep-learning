@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="de"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+
+<main layout:fragment="content">
+    <style>
+        .stars {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+        }
+
+        .stars input {
+            display: none;
+        }
+
+        .stars label {
+            font-size: 22px;
+            color: #ccc;
+            cursor: pointer;
+        }
+
+        .stars input:checked~label,
+        .stars label:hover,
+        .stars label:hover~label {
+            color: gold;
+        }
+    </style>
+
+    <h1>Benutzer</h1>
+
+    <p>
+        <strong th:text="${@t.t('Name:')}"></strong>
+        <span th:text="${user.name}"></span>
+    </p>
+
+    <p>
+        <strong th:text="${@t.t('Sterne: ')}"></strong>
+        <span th:with="rating=${avgRating}">
+            <i class="bi"
+                th:each="i : ${#numbers.sequence(1,5)}"
+                th:classappend="${i <= rating} ? 'bi-star-fill text-warning' : 'bi-star text-muted'">
+            </i>
+        </span>
+    </p>
+
+    <hr> <!-- Bewertung Shreiben -->
+
+    <h4 th:text="${@t.t('Bewertung')}"></h4>
+    <form th:action="@{/user/review/{id}(id=${user.id})}" method="post" enctype="multipart/form-data" id="bewertung" class="row">
+
+        <div class="d-flex align-items-center gap-2">
+            <strong><label th:text="${@t.t('Sterne:')}"></label></strong>
+
+            <div class="stars">
+                <input type="radio" class="form-control" id="star5" name="rating" value="5" required />
+                <label for="star5">★</label>
+
+                <input type="radio" class="form-control" id="star4" name="rating" value="4" />
+                <label for="star4">★</label>
+
+                <input type="radio" class="form-control" id="star3" name="rating" value="3" />
+                <label for="star3">★</label>
+
+                <input type="radio" class="form-control" id="star2" name="rating" value="2" />
+                <label for="star2">★</label>
+
+                <input type="radio" class="form-control" id="star1" name="rating" value="1" />
+                <label for="star1">★</label>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <label class="form-label" th:text="${@t.t('Titel')}"></label>
+            <input type="text" class="form-control" name="titel" required />
+        </div>
+
+        <div class="col-12">
+            <label class="form-label" th:text="${@t.t('Kommentar')}"></label>
+            <textarea name="comment" class="form-control" rows="5" th:placeholder="${@t.t('Schreibe deine Bewertung...')}"
+                required></textarea>
+        </div>
+
+        <div class="col-12 mt-2">
+            <button type="submit" class="btn btn-primary" th:text="${@t.t('Absenden')}"></button>
+        </div>
+    </form>
+
+    <hr> <!-- Bewertungen -->
+
+    <div th:each="star : ${#numbers.sequence(1,5)}">
+        <span th:with="rating=${star}">
+            <i class="bi"
+                th:each="i : ${#numbers.sequence(1,5)}"
+                th:classappend="${i <= rating} ? 'bi-star-fill text-warning' : 'bi-star text-muted'">
+            </i>
+        </span>
+        <a class=""
+            th:href="@{/user/view/{id}(id=${user.id}, stars=${star})}">
+            <span th:text="${ratings[star - 1]}"></span>
+            <span th:text="${@t.t(' Bewertungen')}"></span>
+        </a>
+    </div>
+
+    <a th:if="${filterStars}"
+        th:text="${@t.t('Filter löschen')}"
+        th:href="@{/user/view/{id}(id=${user.id})}">
+    </a>
+
+    <hr>
+
+    <div th:if="${reviews.isEmpty()}">
+        <p th:text="${@t.t('Keine Bewertungen gefunden.')}"></p>
+    </div>
+
+    <div th:each="review : ${reviews}">
+        <div th:text="${review.author.name}"></div>
+
+        <span th:with="rating=${review.rating}">
+            <i class="bi"
+               th:each="i : ${#numbers.sequence(1,5)}"
+               th:classappend="${i <= rating} ? 'bi-star-fill text-warning' : 'bi-star text-muted'">
+            </i>
+        </span>
+
+        <span th:text="${review.title}"></span>
+        <div>
+            <span th:text="${@t.t('Bewerted am ')}"></span>
+            <span th:text="${#temporals.format(review.date)}"></span>
+        </div>
+        <div class="mt-1">
+            <p th:text="${review.comment}" class="multi-line"></p>
+        </div>
+
+        <hr>
+    </div>
+
+    <nav th:if="${reviews.getTotalPages() > 1}">
+        <ul class="pagination">
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(0, reviews.getTotalPages() - 1)}"
+                th:classappend="${i == currentPage} ? 'active'">
+                <a class="page-link"
+                   th:href="@{/user/view/{id}(id=${user.id}, stars=${filterStars}, page=${i})}"
+                   th:text="${i + 1}">
+                </a>
+        </ul>
+    </nav>
+
+</main>
+
+</html>

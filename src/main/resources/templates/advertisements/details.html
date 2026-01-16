@@ -37,6 +37,11 @@
          th:alt="${@t.t('Bild zur Anzeige')}">
 
     <p>
+        <strong th:text="${@t.t('Lehrer:')}"></strong>
+        <a th:href="@{/user/view/{id}(id=${owner.id})}" th:text="${owner.name}" ></a>
+    </p>
+
+    <p>
         <strong th:text="${@t.t('Fach:')}"></strong>
         <span th:text="${advertisement.subject.name}"></span>
     </p>
