@@ -36,6 +36,8 @@
 
     <h1>Benutzer</h1>
 
+    <a th:href="@{/chat/with/{userId}(userId=${user.id})}">Chat</a>
+
     <p>
         <strong th:text="${@t.t('Name:')}"></strong>
         <span th:text="${user.name}"></span>
