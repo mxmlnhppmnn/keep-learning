@@ -86,6 +86,7 @@ public class AdvertisementController {
         model.addAttribute("advertisement", ad);
         model.addAttribute("istErsteller", isOwner);
         model.addAttribute("isFavorite", isFavorite);
+        model.addAttribute("owner", ad.getUser());
 
         return "advertisements/details";
     }

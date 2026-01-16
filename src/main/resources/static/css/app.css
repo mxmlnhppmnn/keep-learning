@@ -14,3 +14,7 @@
     display:block;
     margin: 0 auto;
 }
+
+.multi-line {
+    white-space: pre-line;
+}
