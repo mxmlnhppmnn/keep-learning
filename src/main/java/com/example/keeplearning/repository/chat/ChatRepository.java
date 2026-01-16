@@ -24,4 +24,10 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
             """)
     Optional<Chat> findBetweenUsers(@Param("user1") User user1, @Param("user2") User user2);
 
+    @Query("""
+                SELECT c FROM Chat c
+                WHERE c.user1 = :user or c.user2 = :user
+            """)
+    List<Chat> findAllByUser(@Param("user") User user);
+
 }

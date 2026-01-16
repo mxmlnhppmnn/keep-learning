@@ -6,10 +6,16 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h1 class="mb-0" th:text="${@t.t('Benutzerdetails')}"></h1>
 
-        <a th:href="@{/user/view/{id}(id=${user.id})}"
-           class="btn btn-primary"
-           th:text="${@t.t('Öffentliches Profil')}">
-        </a>
+        <div>
+            <a th:href="@{/chat/list}"
+            class="btn btn-outline-primary"
+            th:text="${@t.t('Chats')}">
+            </a>
+            <a th:href="@{/user/view/{id}(id=${user.id})}"
+            class="btn btn-primary"
+            th:text="${@t.t('Öffentliches Profil')}">
+            </a>
+        </div>
     </div>
 
     <form th:action="@{/user/bearbeiten}" method="post"

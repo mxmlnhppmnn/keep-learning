@@ -54,6 +54,14 @@ public class ChatController {
 
     }
 
+    @GetMapping("/list")
+    public String showChats(@AuthenticationPrincipal User me, Model model) {
+
+        var chats = chatService.getChatsFor(me);
+        model.addAttribute("chats", chats);
+        return "chat/list";
+    }
+
     @PostMapping("/{chatId}")
     public String send(
         @AuthenticationPrincipal User me,

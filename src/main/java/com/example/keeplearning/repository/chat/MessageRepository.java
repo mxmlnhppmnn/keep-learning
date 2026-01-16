@@ -1,6 +1,7 @@
 package com.example.keeplearning.repository.chat;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -11,5 +12,6 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
     // TODO: pagination?
     List<Message> findByChatOrderBySentAtAsc(Chat chat);
+    Optional<Message> findFirstByChatOrderBySentAtDesc(Chat chat);
 
 }

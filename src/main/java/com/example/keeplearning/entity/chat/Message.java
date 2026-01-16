@@ -48,4 +48,8 @@ public class Message {
         return content;
     }
 
+    public LocalDateTime getSentAt() {
+        return sentAt;
+    }
+
 }
