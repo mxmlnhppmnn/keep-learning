@@ -23,12 +23,12 @@ public class Review {
     @JoinColumn(name = "author_id")
     private User author;
 
-    private Long rating;
+    private int rating;
     private String title;
     private String comment;
     private LocalDateTime date;
 
-    public static Review create(User user, User author, long rating, String title, String comment)
+    public static Review create(User user, User author, int rating, String title, String comment)
     {
         var review = new Review();
         review.setUser(user);
@@ -64,11 +64,11 @@ public class Review {
         this.author = author;
     }
 
-    public Long getRating() {
+    public int getRating() {
         return rating;
     }
 
-    public void setRating(Long rating) {
+    public void setRating(int rating) {
         this.rating = rating;
     }
 

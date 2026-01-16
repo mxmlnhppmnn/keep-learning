@@ -95,6 +95,27 @@
 
     <hr> <!-- Bewertungen -->
 
+    <div th:each="star : ${#numbers.sequence(1,5)}">
+        <span th:with="rating=${star}">
+            <i class="bi"
+                th:each="i : ${#numbers.sequence(1,5)}"
+                th:classappend="${i <= rating} ? 'bi-star-fill text-warning' : 'bi-star text-muted'">
+            </i>
+        </span>
+        <a class=""
+            th:href="@{/user/view/{id}(id=${user.id}, stars=${star})}">
+            <span th:text="${ratings[star - 1]}"></span>
+            <span th:text="${@t.t(' Bewertungen')}"></span>
+        </a>
+    </div>
+
+    <a th:if="${filterStars}"
+        th:text="${@t.t('Filter löschen')}"
+        th:href="@{/user/view/{id}(id=${user.id})}">
+    </a>
+
+    <hr>
+
     <div th:if="${reviews.isEmpty()}">
         <p th:text="${@t.t('Keine Bewertungen gefunden.')}"></p>
     </div>
@@ -120,6 +141,18 @@
 
         <hr>
     </div>
+
+    <nav th:if="${reviews.getTotalPages() > 1}">
+        <ul class="pagination">
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(0, reviews.getTotalPages() - 1)}"
+                th:classappend="${i == currentPage} ? 'active'">
+                <a class="page-link"
+                   th:href="@{/user/view/{id}(id=${user.id}, stars=${filterStars}, page=${i})}"
+                   th:text="${i + 1}">
+                </a>
+        </ul>
+    </nav>
 
 </main>
 

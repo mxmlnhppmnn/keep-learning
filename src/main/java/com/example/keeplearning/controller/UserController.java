@@ -10,6 +10,9 @@ import com.example.keeplearning.repository.VerificationRequestRepository;
 import com.example.keeplearning.service.UserService;
 import com.example.keeplearning.service.admin.VerificationService;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -81,20 +84,43 @@ public class UserController {
     }
 
     @GetMapping("/view/{id}")
-    public String showUserView(@PathVariable Long id, Model model) {
+    public String showUserView(
+        @PathVariable Long id,
+        @RequestParam(required = false) Integer stars,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "5") int size,
+        Model model
+    ) {
         User user = userRepository.findById(id).orElseThrow();
-        var reviews = reviewRepository.findByUser(user);
         var avgRating = reviewRepository.findAverageRatingByUser(user);
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Review> results;
+        if (stars == null) {
+            results = reviewRepository.findByUser(user, pageable);
+        } else {
+            results = reviewRepository.findByUserAndRating(user, stars, pageable);
+            model.addAttribute("filterStars", stars);
+        }
+        
         model.addAttribute("user", user);
-        model.addAttribute("avgRating", avgRating);
-        model.addAttribute("reviews", reviews);
+        model.addAttribute("avgRating", Math.round(avgRating));
+        model.addAttribute("reviews", results);
+
+        model.addAttribute("ratings", new int[]{
+            reviewRepository.countByRating(1),
+            reviewRepository.countByRating(2),
+            reviewRepository.countByRating(3),
+            reviewRepository.countByRating(4),
+            reviewRepository.countByRating(5)
+        });
         return "user/view";
     }
 
     @PostMapping("/review/{id}")
     public String rateUser(
         @PathVariable Long id,
-        @RequestParam Long rating,
+        @RequestParam Integer rating,
         @RequestParam String titel,
         @RequestParam String comment,
         @AuthenticationPrincipal User author,
