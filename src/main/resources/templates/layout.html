@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="de"
+      data-bs-theme="light"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
@@ -9,11 +10,12 @@
     <title layout:title-pattern="$CONTENT_TITLE - Meine App">Meine App</title>
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
     <link th:href="@{/css/app.css}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
 
 </head>
-<body class="bg-light">
-<header class="bg-white border-bottom py-2">
+<body class="bg-body-tertiary">
+<header class="bg-body border-bottom py-2">
     <div class="container-fluid d-flex align-items-center justify-content-between">
 
         <!-- Logo links -->
@@ -32,6 +34,44 @@
                    placeholder="Finde die perfekte Nachhilfe..."
                    th:value="${suchbegriff}">
         </form>
+
+        <div>
+            <button class="btn btn-outline-secondary me-3" id="toggleDark">
+                <i class="bi bi-moon"></i>
+            </button>
+
+            <!-- Dark Mode Script -->
+            <script>
+                const toggleBtn = document.getElementById('toggleDark');
+                const html = document.documentElement;
+
+                toggleBtn.addEventListener('click', () => {
+                    if (html.getAttribute('data-bs-theme') === 'light') {
+                        html.setAttribute('data-bs-theme', 'dark');
+                        localStorage.setItem('theme', 'dark');
+                    } else {
+                        html.setAttribute('data-bs-theme', 'light');
+                        localStorage.setItem('theme', 'light');
+                    }
+                    selectIcon(toggleBtn.firstElementChild);
+                });
+
+                function selectIcon(element) {
+                    if (html.getAttribute('data-bs-theme') === 'light') {
+                        element.classList.remove("bi-brightness-high");
+                        element.classList.add("bi-moon");
+                    } else {
+                        element.classList.remove("bi-moon");
+                        element.classList.add("bi-brightness-high");
+                    }
+                }
+
+                // Persist theme
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                html.setAttribute('data-bs-theme', savedTheme);
+                selectIcon(toggleBtn.firstElementChild);
+            </script>
+        </div>
 
         <div class="me-3">
             <a th:href="${currentPath + queryPrefix + 'lang=DE'}">DE</a> |
@@ -57,7 +97,7 @@
     <div class="row layout-body">
 
         <!-- Sidebar links -->
-        <nav class="col-2 bg-white border-end py-3" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+        <nav class="bg-body col-2 border-end py-3" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
             <ul class="nav flex-column">
                 <li class="nav-item"><a class="nav-link" th:href="@{/home}" th:text="${@t.t('Startseite')}"></a></li>
                 <li class="nav-item"><a class="nav-link" th:href="@{/anzeigen}" th:text="${@t.t('Nachhilfe')}"></a></li>
