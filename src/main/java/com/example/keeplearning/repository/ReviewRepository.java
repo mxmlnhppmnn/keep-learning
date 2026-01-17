@@ -25,6 +25,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
                 WHERE r.user = :user
             """)
     Double findAverageRatingByUser(@Param("user") User user);
-    int countByRating(int rating);
+    int countByUserAndRating(User user, int rating);
 
 }

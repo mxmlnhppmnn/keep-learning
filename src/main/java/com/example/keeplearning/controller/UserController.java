@@ -94,6 +94,10 @@ public class UserController {
         User user = userRepository.findById(id).orElseThrow();
         var avgRating = reviewRepository.findAverageRatingByUser(user);
 
+        if (avgRating == null) {
+            avgRating = 0.0;
+        }
+
         Pageable pageable = PageRequest.of(page, size);
         Page<Review> results;
         if (stars == null) {
@@ -108,11 +112,11 @@ public class UserController {
         model.addAttribute("reviews", results);
 
         model.addAttribute("ratings", new int[]{
-            reviewRepository.countByRating(1),
-            reviewRepository.countByRating(2),
-            reviewRepository.countByRating(3),
-            reviewRepository.countByRating(4),
-            reviewRepository.countByRating(5)
+            reviewRepository.countByUserAndRating(user, 1),
+            reviewRepository.countByUserAndRating(user, 2),
+            reviewRepository.countByUserAndRating(user, 3),
+            reviewRepository.countByUserAndRating(user, 4),
+            reviewRepository.countByUserAndRating(user, 5)
         });
         return "user/view";
     }
