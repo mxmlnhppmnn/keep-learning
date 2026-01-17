@@ -7,11 +7,16 @@
 
 <head>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
 </head>
 
 <main layout:fragment="content">
 
-    <div class="chat-box">
+    <!-- TODO: scroll -->
+
+    <div id="chatBox"
+        class="flex-grow-1 overflow-auto p-1 bg-light">
         <div th:each="msg : ${messages}"
             th:classappend="${msg.sender.id == #authentication.principal.id}
                 ? 'text-end' : 'text-start'">
@@ -22,10 +27,53 @@
         </div>
     </div>
 
-    <form method="post">
-        <input name="content" class="form-control" required>
-        <button class="btn btn-primary mt-2" th:text="${@t.t('Senden')}"></button>
-    </form>
+    <div class="border-top p-2">
+        <input id="content" class="form-control" required>
+        <button class="btn btn-primary mt-2" th:text="${@t.t('Senden')}" onclick="sendMessage()"></button>
+    </div>
+
+    <script th:inline="javascript">
+        const chatId = [[${chat.id}]];
+
+        const socket = new SockJS('/ws');
+        const stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, () => {
+
+            stompClient.subscribe(
+                '/topic/chat/' + chatId,
+                (message) => {
+                    const msg = JSON.parse(message.body);
+                    addMessage(msg);
+                }
+            );
+        });
+
+        function sendMessage() {
+            const input = document.getElementById("content");
+            if (!input.value.trim()) {
+                return;
+            }
+
+            stompClient.send("/app/chat.send", {}, JSON.stringify({
+                chatId: chatId,
+                content: input.value
+            }));
+
+            input.value = "";
+        }
+
+        function addMessage(msg) {
+            const div = document.createElement("div");
+            const isMe = msg.sender.id == [[${#authentication.principal.id}]];
+
+            div.classList.add(isMe ? "text-end" : "text-start");
+            div.innerHTML =
+                "<span class='badge bg-secondary'>" + msg.sender.name + "</span>" +
+                "<p>" + msg.content + "</p>";
+            document.getElementById("chatBox").appendChild(div);
+        }
+    </script>
 
 </main>
 

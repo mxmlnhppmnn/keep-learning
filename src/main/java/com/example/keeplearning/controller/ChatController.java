@@ -2,6 +2,8 @@ package com.example.keeplearning.controller;
 
 import java.security.Principal;
 
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.keeplearning.dto.ChatMessage;
 import com.example.keeplearning.entity.User;
 import com.example.keeplearning.entity.chat.Chat;
 import com.example.keeplearning.entity.chat.Message;
@@ -25,11 +28,13 @@ public class ChatController {
     private ChatService chatService;
     private MessageRepository messageRepository;
     private UserRepository userRepository;
+	private SimpMessagingTemplate messagingTemplate;
 
-    public ChatController(ChatService chatService, MessageRepository messageRepository, UserRepository userRepository) {
+    public ChatController(ChatService chatService, MessageRepository messageRepository, UserRepository userRepository, SimpMessagingTemplate messagingTemplate) {
         this.chatService = chatService;
         this.messageRepository = messageRepository;
         this.userRepository = userRepository;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @GetMapping("/{chatId}")
@@ -62,17 +67,20 @@ public class ChatController {
         return "chat/list";
     }
 
-    @PostMapping("/{chatId}")
-    public String send(
-        @AuthenticationPrincipal User me,
-        @PathVariable Long chatId,
-        @RequestParam String content
-    ) {
-        var chat = chatService.get(chatId).orElseThrow();
-        var message = Message.create(chat, me, content);
+    @MessageMapping("/chat.send")
+    public void send(ChatMessage message, Principal principal) {
 
-        messageRepository.save(message);
-        return "redirect:/chat/" + chatId;
+        User sender = userRepository.findByEmail(principal.getName()).orElseThrow();
+        Chat chat = chatService.get(message.getChatId()).orElseThrow();
+
+        if (chat.getUser1().getId() != sender.getId() && chat.getUser2().getId() != sender.getId()) {
+            return;
+        }
+
+        var msg = Message.create(chat, sender, message.getContent());
+        messageRepository.save(msg);
+
+        messagingTemplate.convertAndSend("/topic/chat/" + chat.getId(), msg);
     }
 
 }
