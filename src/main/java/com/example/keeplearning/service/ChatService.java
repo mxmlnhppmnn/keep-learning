@@ -24,8 +24,6 @@ public class ChatService {
     }
 
     public Chat getOrCreate(User user1, User user2) {
-        assert (user1.getId() != user2.getId());
-
         return chatRepository.findBetweenUsers(user1, user2)
             .orElseGet(() -> {
                 var chat = new Chat();
@@ -51,7 +49,7 @@ public class ChatService {
 
         return chats.stream().map((Chat chat) -> {
 
-            User other = chat.getUser1().equals(user) ? chat.getUser2() : chat.getUser1();
+            User other = chat.getUser1().getId().equals(user.getId()) ? chat.getUser2() : chat.getUser1();
             Optional<Message> lastMsg = messageRepository.findFirstByChatOrderBySentAtDesc(chat);
 
             ChatListItem cli = new ChatListItem(

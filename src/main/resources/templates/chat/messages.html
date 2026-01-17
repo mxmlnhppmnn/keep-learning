@@ -15,7 +15,7 @@
 
     <style>
         .chat-scroll {
-            height: calc(100vh - 70px - 95px);
+            height: calc(100vh - 70px - 45px);
             overflow-y: scroll;
         }
     </style>
@@ -32,10 +32,12 @@
         </div>
     </div>
 
-    <div class="border-top p-2">
-        <input id="content" class="form-control" required>
-        <button class="btn btn-primary mt-2" th:text="${@t.t('Senden')}" onclick="sendMessage()"></button>
-    </div>
+    <form action="javascript:;" onsubmit="sendMessage()">
+        <div class="d-flex m-1">
+            <input id="content" class="form-control mx-1" required>
+            <button class="btn btn-primary mx-1" th:text="${@t.t('Senden')}"></button>
+        </div>
+    </form>
 
     <script th:inline="javascript">
         const chatId = [[${chat.id}]];
@@ -44,7 +46,6 @@
         const stompClient = Stomp.over(socket);
 
         stompClient.connect({}, () => {
-
             stompClient.subscribe(
                 '/topic/chat/' + chatId,
                 (message) => {
@@ -53,6 +54,11 @@
                 }
             );
         });
+
+        
+        document.addEventListener("DOMContentLoaded", function(event) {
+            document.getElementById("chatBox").lastElementChild.scrollIntoView();
+        })
 
         function sendMessage() {
             const input = document.getElementById("content");
@@ -77,6 +83,7 @@
                 "<span class='badge bg-secondary'>" + msg.sender.name + "</span>" +
                 "<p>" + msg.content + "</p>";
             document.getElementById("chatBox").appendChild(div);
+            div.scrollIntoView({ behavior: "smooth" });
         }
     </script>
 
