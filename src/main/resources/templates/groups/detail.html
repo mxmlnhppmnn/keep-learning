@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="de"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<main layout:fragment="content">
+
+    <div class="alert alert-warning" th:if="${param.ownerCannotLeave}">
+        Als Ersteller kannst du die Gruppe nicht verlassen.
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <div>
+            <h1 class="mb-0" th:text="${group.name}"></h1>
+            <div class="text-muted" th:text="${group.description}"></div>
+        </div>
+        <div class="d-flex gap-2">
+            <a class="btn btn-outline-secondary" th:href="@{/gruppen}">Zurück</a>
+
+            <form th:if="${!isMember}" th:action="@{/gruppen/{id}/beitreten(id=${group.id})}" method="post">
+                <button class="btn btn-success" type="submit">Beitreten</button>
+            </form>
+            <form th:if="${isMember and !isOwner}" th:action="@{/gruppen/{id}/verlassen(id=${group.id})}" method="post">
+                <button class="btn btn-outline-danger" type="submit">Verlassen</button>
+            </form>
+            <span class="badge bg-primary" th:if="${isOwner}">Ersteller</span>
+        </div>
+    </div>
+
+    <hr>
+
+    <h4>Mitglieder</h4>
+    <ul class="list-group mb-4">
+        <li class="list-group-item d-flex justify-content-between align-items-center" th:each="m : ${members}">
+            <span>
+                <span th:text="${m.user.name}"></span>
+                <span class="badge bg-secondary ms-2" th:if="${m.user.id == group.owner.id}">Owner</span>
+            </span>
+
+            <form th:if="${isOwner and m.user.id != group.owner.id}"
+                  th:action="@{/gruppen/{id}/mitglieder/{mid}/entfernen(id=${group.id}, mid=${m.id})}"
+                  method="post">
+                <button class="btn btn-sm btn-outline-danger" type="submit">Entfernen</button>
+            </form>
+        </li>
+    </ul>
+
+    <h4 id="chat">Gruppenchat</h4>
+
+    <div th:if="${param.reported}" class="alert alert-success">
+        Nachricht wurde gemeldet.
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body" style="max-height: 360px; overflow-y: auto;">
+            <div th:if="${#lists.isEmpty(messages)}" class="text-muted">Noch keine Nachrichten.</div>
+            <div th:each="msg : ${messages}" class="mb-2">
+                <span class="badge bg-secondary" th:text="${msg.sender.name}"></span>
+                <small class="text-muted" th:text="${#temporals.format(msg.sentAt, 'dd.MM HH:mm')}"></small>
+                <form th:if="${msg.sender.id != #authentication.principal.id}" 
+                      th:action="@{/meldungen/gruppennachricht/{mid}(mid=${msg.id})}" method="post" class="d-inline ms-2">
+                    <input type="hidden" name="groupId" th:value="${group.id}">
+                    <button class="btn btn-link btn-sm p-0" type="submit">Melden</button>
+                </form>
+                <div th:text="${msg.content}"></div>
+            </div>
+        </div>
+    </div>
+
+    <form th:if="${isMember}" th:action="@{/gruppen/{id}/chat(id=${group.id})}" method="post" class="d-flex gap-2">
+        <input class="form-control" name="content" placeholder="Nachricht..." required maxlength="1000">
+        <button class="btn btn-primary" type="submit">Senden</button>
+    </form>
+
+    <div th:if="${!isMember}" class="alert alert-info mt-3">
+        Du musst der Gruppe beitreten, um den Chat zu verwenden.
+    </div>
+
+</main>
+</html>

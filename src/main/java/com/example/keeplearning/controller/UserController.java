@@ -5,6 +5,9 @@ import com.example.keeplearning.entity.User;
 import com.example.keeplearning.entity.verification.VerificationRequest;
 import com.example.keeplearning.entity.verification.VerificationRequestStatus;
 import com.example.keeplearning.repository.ReviewRepository;
+import com.example.keeplearning.repository.LessonSeriesRepository;
+import com.example.keeplearning.repository.AdvertisementRepository;
+import com.example.keeplearning.repository.SubjectRepository;
 import com.example.keeplearning.repository.UserRepository;
 import com.example.keeplearning.repository.VerificationRequestRepository;
 import com.example.keeplearning.service.UserService;
@@ -27,7 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 @RequestMapping("/user")
@@ -37,13 +40,22 @@ public class UserController {
     private final VerificationRequestRepository verificationRequestRepository;
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
+    private final LessonSeriesRepository lessonSeriesRepository;
+    private final AdvertisementRepository advertisementRepository;
+    private final SubjectRepository subjectRepository;
 
-    public UserController(UserService userService,  VerificationService verificationService, VerificationRequestRepository verificationRequestRepository, UserRepository userRepository, ReviewRepository reviewRepository) {
+    public UserController(UserService userService,  VerificationService verificationService, VerificationRequestRepository verificationRequestRepository, UserRepository userRepository, ReviewRepository reviewRepository,
+                          LessonSeriesRepository lessonSeriesRepository,
+                          AdvertisementRepository advertisementRepository,
+                          SubjectRepository subjectRepository) {
         this.userService = userService;
         this.verificationService = verificationService;
         this.verificationRequestRepository = verificationRequestRepository;
         this.userRepository = userRepository;
         this.reviewRepository = reviewRepository;
+        this.lessonSeriesRepository = lessonSeriesRepository;
+        this.advertisementRepository = advertisementRepository;
+        this.subjectRepository = subjectRepository;
     }
 
     //Das Profil
@@ -80,6 +92,31 @@ public class UserController {
         model.addAttribute("user", user);
         model.addAttribute("hasPending", hasPending);
         model.addAttribute("rejectedRequest", rejectedRequest.orElse(null));
+
+        // Buchungen im Lehrerprofil anzeigen (damit der Payment-Demo-Flow sichtbar ist)
+        if ("TEACHER".equalsIgnoreCase(user.getRole())) {
+            var series = lessonSeriesRepository.findByTeacherIdOrderByIdDesc(user.getId());
+            Map<Long, String> courseTitles = new HashMap<>();
+            Map<Long, String> subjectNames = new HashMap<>();
+            Map<Long, String> studentNames = new HashMap<>();
+
+            for (var s : series) {
+                String title = (s.getAdvertisementId() == null) ? ("Kurs #" + s.getId())
+                        : advertisementRepository.findById(s.getAdvertisementId()).map(a -> a.getTitle()).orElse("Kurs #" + s.getId());
+                courseTitles.put(s.getId(), title);
+
+                String subject = (s.getSubjectId() == null) ? "" : subjectRepository.findById(s.getSubjectId()).map(sub -> sub.getName()).orElse("");
+                subjectNames.put(s.getId(), subject);
+
+                String studentName = userRepository.findById(s.getStudentId()).map(u -> u.getName()).orElse("Schueler #" + s.getStudentId());
+                studentNames.put(s.getId(), studentName);
+            }
+
+            model.addAttribute("teacherSeries", series);
+            model.addAttribute("teacherCourseTitles", courseTitles);
+            model.addAttribute("teacherSubjectNames", subjectNames);
+            model.addAttribute("teacherStudentNames", studentNames);
+        }
         return "user/detail";
     }
 

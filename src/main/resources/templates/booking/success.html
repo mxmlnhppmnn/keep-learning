@@ -7,6 +7,18 @@
     <h2 th:text="${@t.t('Buchung erfolgreich!')}"></h2>
     <p th:text="${@t.t('Dein Termin wurde gespeichert.')}"></p>
 
+    <div class="card my-3" th:if="${serie != null}">
+        <div class="card-body">
+            <p class="mb-1"><strong>Status:</strong>
+                <span th:text="${serie.paid} ? 'bezahlt' : 'unbezahlt (Probestunde)'"></span>
+            </p>
+            <p class="mb-1" th:if="${serie.paid}"><strong>Zahlungsart:</strong> <span th:text="${serie.paymentMethod}"></span></p>
+            <p class="mb-0" th:if="${serie.paid}"><strong>Bezahlt am:</strong>
+                <span th:text="${#temporals.format(serie.paidAt, 'dd.MM.yyyy HH:mm')}"></span>
+            </p>
+        </div>
+    </div>
+
     <a th:href="@{/anzeigen}"
        class="btn btn-primary"
        th:text="${@t.t('Zurück zur Übersicht')}"></a>

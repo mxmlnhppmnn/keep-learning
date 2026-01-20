@@ -11,6 +11,9 @@ import com.example.keeplearning.service.TimeslotService;
 import com.example.keeplearning.repository.SchoolTypeRepository;
 import com.example.keeplearning.service.favorite.FavoriteService;
 import com.example.keeplearning.service.similarAd.SimilarAdvertisementService;
+import com.example.keeplearning.entity.SearchHistory;
+import com.example.keeplearning.repository.SearchHistoryRepository;
+import com.example.keeplearning.service.SearchSuggestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -54,10 +58,38 @@ public class AdvertisementController {
     @Autowired
     private SimilarAdvertisementService similarAdvertisementService;
 
+    @Autowired
+    private SearchHistoryRepository searchHistoryRepository;
+
+    @Autowired
+    private SearchSuggestionService searchSuggestionService;
+
     @GetMapping
-    public String listAdvertisements(Model model) {
-        model.addAttribute("anzeigen", advertisementRepository.findAll());
+    public String listAdvertisements(Model model, @AuthenticationPrincipal User user) {
+        List<Advertisement> all = advertisementRepository.findAll();
+        model.addAttribute("anzeigen", filterVisibleAdvertisements(all, user));
         return "advertisements/list";
+    }
+
+    private List<Advertisement> filterVisibleAdvertisements(List<Advertisement> ads, User user) {
+        if (ads == null || ads.isEmpty()) return ads;
+
+        return ads.stream().filter(ad -> {
+            if (!ad.isBooked()) {
+                return true;
+            }
+
+            // Gebuchte Anzeige bleibt sichtbar fuer:
+            // 1) Owner (Lehrer)
+            // 2) Schueler, der gebucht hat
+            if (user == null) {
+                return false;
+            }
+            if (ad.getUser() != null && ad.getUser().getId() != null && ad.getUser().getId().equals(user.getId())) {
+                return true;
+            }
+            return ad.getBookedStudentId() != null && ad.getBookedStudentId().equals(user.getId());
+        }).toList();
     }
 
     //Anzeige erstellen
@@ -110,7 +142,8 @@ public class AdvertisementController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "3") int size,
             @RequestParam(defaultValue = "title,asc") String sort,
-            Model model
+            Model model,
+            @AuthenticationPrincipal User user
     ) {
         String[] sortParams = sort.split(",");
         Sort sorting = Sort.by(
@@ -127,15 +160,36 @@ public class AdvertisementController {
         } else {
             results = advertisementRepository
                     .findByTitleContainingIgnoreCase(q, pageable);
+
+            // Suchverlauf speichern (nur wenn eingeloggt)
+            if (user != null) {
+                SearchHistory h = new SearchHistory();
+                h.setUserId(user.getId());
+                h.setQuery(q.trim());
+                h.setCreatedAt(LocalDateTime.now());
+                searchHistoryRepository.save(h);
+            }
         }
 
-        model.addAttribute("anzeigen", results.getContent());
+        model.addAttribute("anzeigen", filterVisibleAdvertisements(results.getContent(), user));
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", results.getTotalPages());
         model.addAttribute("suchbegriff", q);
         model.addAttribute("sort", sort);
 
         return "advertisements/list";
+    }
+
+    @GetMapping("/suggestions")
+    @ResponseBody
+    public List<String> suggestions(
+            @RequestParam(required = false) String q,
+            @RequestParam(defaultValue = "8") int limit,
+            @AuthenticationPrincipal User user
+    ) {
+        Long userId = user != null ? user.getId() : null;
+        int safeLimit = Math.max(1, Math.min(limit, 20));
+        return searchSuggestionService.getSuggestions(userId, q, safeLimit);
     }
 
 
@@ -266,6 +320,11 @@ public class AdvertisementController {
 
         var anzeige = advertisementRepository.findById(advertisementId)
                 .orElseThrow(() -> new IllegalArgumentException("Anzeige nicht gefunden"));
+
+        // Wenn die Anzeige bereits gebucht wurde, soll kein weiterer Schueler buchen koennen.
+        if (anzeige.isBooked()) {
+            return "redirect:/anzeigen/" + advertisementId + "?alreadyBooked=1";
+        }
 
         Long userId = anzeige.getUser().getId();
 

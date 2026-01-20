@@ -3,6 +3,7 @@ package com.example.keeplearning.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "lesson_series")
@@ -16,6 +17,9 @@ public class LessonSeries {
     private Long studentId;
     private Long subjectId;
 
+    // Referenz auf die Anzeige ("Kurs"), aus der die Buchung entstanden ist.
+    private Long advertisementId;
+
     private int weekday;
 
     private LocalTime startTime;
@@ -23,6 +27,15 @@ public class LessonSeries {
     private int duration;
 
     private boolean trialLesson;
+
+    // Preis pro Stunde (fuer Rechnungsverwaltung). Wird beim Buchen aus der Anzeige kopiert,
+    // damit sich Rechnungen nicht aendern, falls der Lehrer spaeter den Anzeigenpreis aendert.
+    private Double pricePerHour;
+
+    // Zahlungsabwicklung (Mock, keine echte PayPal-API)
+    private String paymentMethod; // PAYPAL | SEPA | null
+    private boolean paid;
+    private LocalDateTime paidAt;
 
     //Getter und Setter
 
@@ -58,6 +71,14 @@ public class LessonSeries {
         this.subjectId = subjectId;
     }
 
+    public Long getAdvertisementId() {
+        return advertisementId;
+    }
+
+    public void setAdvertisementId(Long advertisementId) {
+        this.advertisementId = advertisementId;
+    }
+
     public int getWeekday() {
         return weekday;
     }
@@ -88,6 +109,35 @@ public class LessonSeries {
 
     public void setTrialLesson(boolean trialLesson) {
         this.trialLesson = trialLesson;
+    }
+
+    public Double getPricePerHour() {
+        return pricePerHour;
+    }
+
+    public void setPricePerHour(Double pricePerHour) {
+        this.pricePerHour = pricePerHour;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public boolean isPaid() {
+        return paid;
+    }
+
+    public void setPaid(boolean paid) {
+        this.paid = paid;
+        this.paidAt = paid ? LocalDateTime.now() : null;
+    }
+
+    public LocalDateTime getPaidAt() {
+        return paidAt;
     }
 }
 

@@ -23,16 +23,20 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/anzeigen/neu").hasAuthority("VERIFIED")
+                        // Wichtig: requestMatchers werden in Reihenfolge ausgewertet.
+                        // Wenn ein Pfad mehrfach gematcht wird, gewinnt der erste Treffer.
+                        // Verified ist laut Projekt-Notizen "für später" – Features sollen auch ohne Verifizierung nutzbar sein.
                         .requestMatchers("/anzeigen/neu").hasRole("TEACHER")
                         .requestMatchers("/anzeigen/**").authenticated()
-                        .requestMatchers("/buchung/**").hasAuthority("VERIFIED")
                         .requestMatchers("/buchung/**").hasRole("STUDENT")
                         .requestMatchers("/profil/**").authenticated()
-                        .requestMatchers("/lehrer/**").hasAuthority("VERIFIED")
                         .requestMatchers("/lehrer/**").hasRole("TEACHER")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/favoriten/**").hasRole("STUDENT")
+                        .requestMatchers("/rechnungen/**").hasRole("STUDENT")
+                        .requestMatchers("/einnahmen/**").hasRole("TEACHER")
+                        .requestMatchers("/gruppen/**").authenticated()
+                        .requestMatchers("/meldungen/**").authenticated()
                         .requestMatchers("/user/**").authenticated()
                         .requestMatchers("/chat/**").authenticated()
                         .anyRequest().permitAll()

@@ -27,13 +27,90 @@
         </div>
 
         <!-- Search mittig -->
-        <form th:action="@{/anzeigen/suche}" method="get" class="flex-grow-1 px-4">
+        <form th:action="@{/anzeigen/suche}" method="get" class="flex-grow-1 px-4 position-relative">
             <input type="text"
+                   id="searchInput"
                    name="q"
                    class="form-control"
+                   autocomplete="off"
                    placeholder="Finde die perfekte Nachhilfe..."
                    th:value="${suchbegriff}">
+
+            <!-- Suggestions Dropdown -->
+            <div id="searchSuggestions" class="list-group position-absolute w-100" style="z-index: 2000; display: none;"></div>
         </form>
+
+        <script>
+            (function () {
+                const input = document.getElementById('searchInput');
+                const box = document.getElementById('searchSuggestions');
+                if (!input || !box) return;
+
+                let lastQuery = '';
+                let abortController = null;
+
+                function hide() {
+                    box.style.display = 'none';
+                    box.innerHTML = '';
+                }
+
+                function show(items) {
+                    box.innerHTML = '';
+                    if (!items || items.length === 0) {
+                        hide();
+                        return;
+                    }
+                    items.forEach(text => {
+                        const a = document.createElement('a');
+                        a.href = '#';
+                        a.className = 'list-group-item list-group-item-action';
+                        a.textContent = text;
+                        a.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            input.value = text;
+                            hide();
+                            // Formular absenden
+                            input.form.submit();
+                        });
+                        box.appendChild(a);
+                    });
+                    box.style.display = 'block';
+                }
+
+                async function fetchSuggestions(q) {
+                    try {
+                        if (abortController) abortController.abort();
+                        abortController = new AbortController();
+
+                        const url = `/anzeigen/suggestions?q=${encodeURIComponent(q)}&limit=8`;
+                        const res = await fetch(url, { signal: abortController.signal });
+                        if (!res.ok) return hide();
+                        const data = await res.json();
+                        show(data);
+                    } catch (e) {
+                        // ignore
+                    }
+                }
+
+                input.addEventListener('focus', () => {
+                    const q = input.value || '';
+                    fetchSuggestions(q);
+                });
+
+                input.addEventListener('input', () => {
+                    const q = input.value || '';
+                    if (q === lastQuery) return;
+                    lastQuery = q;
+                    fetchSuggestions(q);
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!box.contains(e.target) && e.target !== input) {
+                        hide();
+                    }
+                });
+            })();
+        </script>
 
         <div>
             <button class="btn btn-outline-secondary me-3" id="toggleDark">
@@ -101,10 +178,18 @@
             <ul class="nav flex-column">
                 <li class="nav-item"><a class="nav-link" th:href="@{/home}" th:text="${@t.t('Startseite')}"></a></li>
                 <li class="nav-item"><a class="nav-link" th:href="@{/anzeigen}" th:text="${@t.t('Nachhilfe')}"></a></li>
+
+                <!-- Lerngruppen -->
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link" th:href="@{/gruppen}">Lerngruppen</a>
+                </li>
                 <!-- Nur für Administratoren -->
                 <li class="nav-item" sec:authorize="hasAuthority('ROLE_ADMIN')">
                     <a class="nav-link" th:href="@{/admin/verifications}" th:text="${@t.t('Verifizierungsanträge')}">
                     </a>
+                </li>
+                <li class="nav-item" sec:authorize="hasAuthority('ROLE_ADMIN')">
+                    <a class="nav-link" th:href="@{/admin/reports}">Meldungen</a>
                 </li>
                 <li class="nav-item" sec:authorize="hasAuthority('ROLE_ADMIN')">
                     <a class="nav-link" th:href="@{/admin/users}" th:text="${@t.t('Benutzer verwalten')}">
@@ -120,6 +205,10 @@
                 <li class="nav-item" sec:authorize="hasAuthority('ROLE_STUDENT')">
                     <a class="nav-link" th:href="@{/favoriten}" th:text="${@t.t('Favoriten')}">
                     </a>
+                </li>
+
+                <li class="nav-item" sec:authorize="hasAuthority('ROLE_STUDENT')">
+                    <a class="nav-link" th:href="@{/rechnungen}">Rechnungen</a>
                 </li>
             </ul>
         </nav>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="de"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<main layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="mb-0">Lerngruppen</h1>
+        <a class="btn btn-primary" th:href="@{/gruppen/neu}">Gruppe erstellen</a>
+    </div>
+
+    <div class="alert alert-info" th:if="${#lists.isEmpty(allGroups)}">
+        Noch keine Gruppen vorhanden.
+    </div>
+
+    <div class="row" th:if="${!#lists.isEmpty(allGroups)}">
+        <div class="col-md-6 mb-3" th:each="g : ${allGroups}">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${g.name}"></h5>
+                    <p class="card-text" th:text="${g.description}"></p>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a class="btn btn-outline-primary" th:href="@{/gruppen/{id}(id=${g.id})}">Öffnen</a>
+
+                        <form th:if="${!myGroupIds.contains(g.id)}"
+                              th:action="@{/gruppen/{id}/beitreten(id=${g.id})}"
+                              method="post">
+                            <button class="btn btn-success" type="submit">Beitreten</button>
+                        </form>
+                        <span class="badge bg-success" th:if="${myGroupIds.contains(g.id)}">Mitglied</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+</html>

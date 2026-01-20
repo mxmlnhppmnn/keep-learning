@@ -55,4 +55,30 @@ public class EmailService {
 
         mailSender.send(mail);
     }
+
+    public void sendPaymentConfirmationToStudent(
+            String studentEmail,
+            String paymentMethod,
+            Double amount
+    ) {
+        SimpleMailMessage mail = new SimpleMailMessage();
+        mail.setFrom("keeplearning.oth@gmail.com");
+        mail.setTo(studentEmail);
+        mail.setSubject("Zahlungsbestätigung");
+
+        String method = paymentMethod == null ? "PAYPAL" : paymentMethod;
+
+        mail.setText("""
+                Hallo,
+
+                deine Zahlung wurde erfolgreich verbucht.
+
+                Zahlungsmethode: %s
+                Betrag: %.2f EUR
+
+                KeepLearning
+                """.formatted(method, amount == null ? 0.0 : amount));
+
+        mailSender.send(mail);
+    }
 }

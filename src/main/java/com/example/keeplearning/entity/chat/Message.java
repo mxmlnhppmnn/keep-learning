@@ -31,6 +31,10 @@ public class Message {
 
     private LocalDateTime sentAt;
 
+    public Long getId() {
+        return id;
+    }
+
     public static Message create(Chat chat, User sender, String content) {
         var msg = new Message();
         msg.chat = chat;

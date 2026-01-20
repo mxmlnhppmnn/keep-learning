@@ -13,6 +13,10 @@
 
 <main class="p-0 col-10 mt-2" layout:fragment="content">
 
+    <div class="alert alert-success m-2" role="alert" th:if="${param.reported}">
+        Vielen Dank! Die Nachricht wurde gemeldet.
+    </div>
+
     <style>
         .chat-scroll {
             height: calc(100vh - 70px - 45px);
@@ -23,12 +27,20 @@
     <div id="chatBox"
         class="chat-scroll p-2">
         <div th:each="msg : ${messages}"
-            th:classappend="${msg.sender.id == #authentication.principal.id}
+             th:classappend="${msg.sender.id == #authentication.principal.id}
                 ? 'text-end' : 'text-start'">
 
-            <span class="badge bg-secondary"
-                th:text="${msg.sender.name}"></span>
-            <p th:text="${msg.content}"></p>
+            <span class="badge bg-secondary" th:text="${msg.sender.name}"></span>
+            <p class="mb-1" th:text="${msg.content}"></p>
+
+            <!-- Melden (nur wenn nicht eigene Nachricht) -->
+            <form th:if="${msg.sender.id != #authentication.principal.id}"
+                  th:action="@{/meldungen/nachricht/{id}(id=${msg.id})}"
+                  method="post"
+                  class="d-inline">
+                <input type="hidden" name="chatId" th:value="${chat.id}" />
+                <button type="submit" class="btn btn-link btn-sm text-danger p-0">Melden</button>
+            </form>
         </div>
     </div>
 

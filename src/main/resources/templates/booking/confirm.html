@@ -48,8 +48,17 @@
         <input type="hidden" name="start" th:value="${start}">
         <input type="hidden" name="trialLesson" th:value="${probe}">
 
-        <button class="btn btn-success"
-                th:text="${@t.t('Buchung abschließen')}">
+        <div class="mb-3" th:if="${!probe}">
+            <label for="paymentMethod" class="form-label"><strong>Zahlungsmethode</strong></label>
+            <select id="paymentMethod" name="paymentMethod" class="form-select">
+                <option value="PAYPAL" th:selected="${paymentMethod == 'PAYPAL'}">PayPal</option>
+                <option value="SEPA" th:selected="${paymentMethod == 'SEPA'}">SEPA</option>
+            </select>
+            <div class="form-text">Mock-Zahlung (keine echte PayPal-Anbindung) – dient nur dem Feature-Nachweis.</div>
+        </div>
+
+        <button class="btn btn-success" type="submit"
+                th:text="${probe} ? ${@t.t('Buchung abschließen')} : 'Weiter zur Zahlung'">
         </button>
     </form>
 

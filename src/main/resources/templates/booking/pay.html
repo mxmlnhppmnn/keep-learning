@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<div layout:fragment="content">
+
+    <h2>Zahlung abschließen</h2>
+    <hr>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <p class="mb-1"><strong>Kurs:</strong>
+                <span th:text="${anzeige != null ? anzeige.title : ('Kurs #' + serie.id)}"></span>
+            </p>
+            <p class="mb-1"><strong>Preis:</strong>
+                <span th:text="${serie.pricePerHour} ?: 0"></span> €
+            </p>
+            <p class="mb-0"><strong>Status:</strong> <span>unbezahlt</span></p>
+        </div>
+    </div>
+
+    <form method="post" th:action="@{/buchung/bezahlen}" class="card">
+        <div class="card-body">
+            <input type="hidden" name="seriesId" th:value="${serie.id}">
+
+            <label for="paymentMethod" class="form-label"><strong>Zahlungsart</strong></label>
+            <select id="paymentMethod" name="paymentMethod" class="form-select mb-2">
+                <option value="PAYPAL" th:selected="${paymentMethod == 'PAYPAL'}">PayPal</option>
+                <option value="SEPA" th:selected="${paymentMethod == 'SEPA'}">SEPA</option>
+            </select>
+
+            <div class="alert alert-info mb-3">
+                <strong>Demo-Flow:</strong> Dies ist eine Mock-Zahlung.
+                In einer echten Anwendung würde hier eine PayPal/SEPA-API angebunden.
+            </div>
+
+            <button class="btn btn-success" type="submit">Jetzt bezahlen</button>
+            <a th:href="@{/anzeigen}" class="btn btn-outline-secondary ms-2">Abbrechen</a>
+        </div>
+    </form>
+
+</div>
+
+</html>

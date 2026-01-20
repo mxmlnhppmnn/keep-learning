@@ -107,8 +107,10 @@ public class VerificationService {
 
 
     private void assertAdmin(User user) {
-        System.out.println("ROLE FROM USER OBJECT = [" + user.getRole() + "]");
-        if (!"admin".equals(user.getRole())) {
+        // role wird im Projekt als Wert ohne ROLE_-Prefix gespeichert (z.B. "ADMIN")
+        // und in User.getAuthorities() zu "ROLE_ADMIN" gemappt.
+        // Hier daher case-insensitive pruefen, damit Approve/Reject nicht mit 500 scheitert.
+        if (user == null || user.getRole() == null || !"ADMIN".equalsIgnoreCase(user.getRole())) {
             throw new SecurityException("Only admins can perform this action");
         }
     }

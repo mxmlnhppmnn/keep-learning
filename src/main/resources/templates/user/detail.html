@@ -11,6 +11,12 @@
             class="btn btn-outline-primary"
             th:text="${@t.t('Chats')}">
             </a>
+            <a sec:authorize="hasRole('STUDENT')" th:href="@{/rechnungen}"
+               class="btn btn-outline-secondary"
+               >Rechnungen</a>
+            <a sec:authorize="hasRole('TEACHER')" th:href="@{/einnahmen}"
+               class="btn btn-outline-secondary"
+               >Einnahmen</a>
             <a th:href="@{/user/view/{id}(id=${user.id})}"
             class="btn btn-primary"
             th:text="${@t.t('Öffentliches Profil')}">
@@ -75,6 +81,38 @@
             th:href="@{/lehrer/{id}/verfuegbarkeit(id=${#authentication.principal.id})}" class="btn btn-primary"
             th:text="${@t.t('Verfügbarkeit verwalten')}">
         </a>
+    </div>
+
+    <div sec:authorize="hasRole('TEACHER')" class="mt-4" th:if="${teacherSeries != null}">
+        <hr>
+        <h3>Gebuchte Kurse (Lehreransicht)</h3>
+        <div th:if="${#lists.isEmpty(teacherSeries)}" class="alert alert-info">Noch keine Buchungen vorhanden.</div>
+        <div class="card" th:if="${!#lists.isEmpty(teacherSeries)}">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped align-middle mb-0">
+                        <thead>
+                        <tr>
+                            <th>Kurs</th>
+                            <th>Fach</th>
+                            <th>Schueler</th>
+                            <th>Zahlung</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="s : ${teacherSeries}">
+                            <td th:text="${teacherCourseTitles[s.id]}"></td>
+                            <td th:text="${teacherSubjectNames[s.id]}"></td>
+                            <td th:text="${teacherStudentNames[s.id]}"></td>
+                            <td>
+                                <span th:text="${s.paid} ? 'bezahlt (' + ${s.paymentMethod} + ')' : (s.trialLesson ? 'Probestunde' : 'unbezahlt')"></span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
     <hr>

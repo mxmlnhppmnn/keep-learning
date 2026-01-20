@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+
+<main layout:fragment="content">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="mb-0">Meldungen</h1>
+    </div>
+
+    <div th:if="${param.deleted}" class="alert alert-success">
+        Meldung wurde gelöscht.
+    </div>
+
+    <div th:if="${param.removed}" class="alert alert-success">
+        Gemeldete Nachricht wurde entfernt.
+    </div>
+
+    <div th:if="${#lists.isEmpty(reports)}" class="alert alert-info">
+        Keine Meldungen vorhanden.
+    </div>
+
+    <div class="card" th:if="${!#lists.isEmpty(reports)}">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th>Datum</th>
+                        <th>Typ</th>
+                        <th>Referenz</th>
+                        <th>Reporter</th>
+                        <th>Grund</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="r : ${reports}">
+                        <td th:text="${#temporals.format(r.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
+                        <td th:text="${r.type}"></td>
+                        <td>
+                            <span th:if="${r.type.name() == 'ADVERTISEMENT'}" th:text="${adTitles[r.id]} ?: ('Anzeige #' + r.advertisementId)"></span>
+                            <span th:if="${r.type.name() == 'MESSAGE'}" th:text="${msgPreviews[r.id]} ?: ('Nachricht #' + r.messageId)"></span>
+                            <span th:if="${r.type.name() == 'STUDY_GROUP_MESSAGE'}" th:text="${groupMsgPreviews[r.id]} ?: ('Gruppennachricht #' + r.studyGroupMessageId)"></span>
+                        </td>
+                        <td th:text="${r.reporter.name} + ' (' + ${r.reporter.email} + ')' "></td>
+                        <td th:text="${r.reason} ?: '-' "></td>
+                        <td class="text-end">
+                            <form th:if="${r.type.name() == 'MESSAGE' or r.type.name() == 'STUDY_GROUP_MESSAGE'}"
+                                  th:action="@{/admin/reports/{id}/remove-message(id=${r.id})}" method="post" class="d-inline">
+                                <button class="btn btn-outline-warning btn-sm" type="submit">Nachricht entfernen</button>
+                            </form>
+                            <form th:action="@{/admin/reports/{id}/delete(id=${r.id})}" method="post" class="d-inline">
+                                <button class="btn btn-outline-danger btn-sm" type="submit">Löschen</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</main>
+</html>

@@ -26,6 +26,17 @@ public class Advertisement {
 
     private Boolean trialLesson;
 
+    // Wird auf true gesetzt, sobald ein Schueler die Anzeige gebucht hat.
+    // Dadurch wird die Anzeige fuer andere Schueler nicht mehr angezeigt/gebucht.
+    @Column(nullable = false)
+    private boolean booked = false;
+
+    // Schueler-ID, der diese Anzeige gebucht hat (nur relevant, wenn booked == true)
+    private Long bookedStudentId;
+
+    // Serie, die durch die Buchung entstanden ist (nur relevant, wenn booked == true)
+    private Long bookedSeriesId;
+
     //Getter und Setter
 
     public Long getId() {
@@ -93,5 +104,29 @@ public class Advertisement {
     }
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
+
+    public boolean isBooked() {
+        return booked;
+    }
+
+    public void setBooked(boolean booked) {
+        this.booked = booked;
+    }
+
+    public Long getBookedStudentId() {
+        return bookedStudentId;
+    }
+
+    public void setBookedStudentId(Long bookedStudentId) {
+        this.bookedStudentId = bookedStudentId;
+    }
+
+    public Long getBookedSeriesId() {
+        return bookedSeriesId;
+    }
+
+    public void setBookedSeriesId(Long bookedSeriesId) {
+        this.bookedSeriesId = bookedSeriesId;
+    }
 
 }
