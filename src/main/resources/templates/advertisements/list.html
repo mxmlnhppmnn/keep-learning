@@ -21,16 +21,16 @@
 
         <select name="sort" onchange="this.form.submit()">
             <option value="price,asc"
-                    th:selected="${sort == 'price,asc'}">
-                Preis aufsteigend
+                    th:selected="${sort == 'price,asc'}"
+                    th:text="${@t.t('Preis aufsteigend')}">
             </option>
             <option value="price,desc"
-                    th:selected="${sort == 'price,desc'}">
-                Preis absteigend
+                    th:selected="${sort == 'price,desc'}"
+                    th:text="${@t.t('Preis absteigend')}">
             </option>
             <option value="title,asc"
-                    th:selected="${sort == 'title,asc'}">
-                Titel A–Z
+                    th:selected="${sort == 'title,asc'}"
+                    th:text="${@t.t('Titel A-Z')}">
             </option>
         </select>
     </form>
