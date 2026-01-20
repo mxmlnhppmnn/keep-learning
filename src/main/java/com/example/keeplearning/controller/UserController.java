@@ -147,6 +147,17 @@ public class UserController {
         return "utils/show-text";
     }
 
+    @PostMapping("/review/{id}/delete")
+    public String deleteReview(@PathVariable Long id, @AuthenticationPrincipal User me) {
+        Review review = reviewRepository.findById(id).orElseThrow();
+
+        if (review.getAuthor().getId().equals(me.getId())) {
+            reviewRepository.deleteById(review.getId());
+        }
+        
+        return "redirect:/user/view/" + review.getUser().getId();
+    }
+
     @PostMapping("/bearbeiten")
     public String updateUser(@ModelAttribute User changedUser, @AuthenticationPrincipal User user, Model model) {
         if (changedUser.getName() != null)
