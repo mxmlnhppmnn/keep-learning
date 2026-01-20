@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="de"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+
+<main layout:fragment="content">
+
+    <h2 class="mb-3" th:text="${@t.t('Hochgeladen')}"></h2>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th th:text="${@t.t('Datei')}"></th>
+            <th th:text="${@t.t('Geteilt mit')}"></th>
+            <th th:text="${@t.t('Kommentar')}"></th>
+            <th th:text="${@t.t('Gesended')}"></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="file : ${shared}">
+            <td>
+                <a th:href="@{/share/download/{id}(id=${file.id})}"
+                   th:text="${file.fancyFilename}"></a>
+            </td>
+            <td th:text="${file.destination.username}"></td>
+            <td th:text="${file.comment}"></td>
+            <td th:text="${#temporals.format(file.sentAt, 'yyyy-MM-dd HH:mm')}"></td>
+            <td>
+                <form th:action="@{/share/delete/{id}(id=${file.id})}" method="post">
+                    <button class="btn btn-sm p-0">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <hr class="my-5">
+
+    <h2 class="mb-3" th:text="${@t.t('Freigaben')}"></h2>
+
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th th:text="${@t.t('Datei')}"></th>
+            <th th:text="${@t.t('Besitzer')}"></th>
+            <th th:text="${@t.t('Kommentar')}"></th>
+            <th th:text="${@t.t('Gesended')}"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="file : ${sharedWithMe}">
+            <td>
+                <a th:href="@{/share/download/{id}(id=${file.id})}"
+                   th:text="${file.fancyFilename}"></a>
+            </td>
+            <td th:text="${file.sender.username}"></td>
+            <td th:text="${file.comment}"></td>
+            <td th:text="${#temporals.format(file.sentAt, 'yyyy-MM-dd HH:mm')}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+</main>
+
+</html>

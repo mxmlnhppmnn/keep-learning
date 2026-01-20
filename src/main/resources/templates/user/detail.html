@@ -7,6 +7,10 @@
         <h1 class="mb-0" th:text="${@t.t('Benutzerdetails')}"></h1>
 
         <div>
+            <a th:href="@{/share/list}"
+            class="btn btn-outline-primary"
+            th:text="${@t.t('Freigaben')}">
+            </a>
             <a th:href="@{/chat/list}"
             class="btn btn-outline-primary"
             th:text="${@t.t('Chats')}">

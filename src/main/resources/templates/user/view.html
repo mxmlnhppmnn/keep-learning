@@ -34,9 +34,15 @@
         }
     </style>
 
-    <h1>Benutzer</h1>
+    <div class="d-flex justify-content-between">
+        <h1 th:text="${@t.t('Benutzer')}"></h1>
 
-    <a th:href="@{/chat/with/{userId}(userId=${user.id})}">Chat</a>
+        <div>
+            <a th:href="@{/share/{id}(id=${user.id})}" th:text="${@t.t('Freigeben')}" class="btn btn-primary"></a>
+            <a th:href="@{/chat/with/{userId}(userId=${user.id})}" th:text="${@t.t('Chat')}" class="btn btn-primary"></a>
+        </div>
+    </div>
+
 
     <p>
         <strong th:text="${@t.t('Name:')}"></strong>

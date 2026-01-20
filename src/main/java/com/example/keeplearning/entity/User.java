@@ -32,6 +32,10 @@ public class User implements UserDetails {
     private LocalDateTime lockedUntil;
     private String lockReason;
 
+    public boolean equalsId(User other) {
+        return id.equals(other.id);
+    }
+
     public String getName() {
         return name;
     }

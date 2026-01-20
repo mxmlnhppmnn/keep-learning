@@ -35,6 +35,7 @@ public class SecurityConfig {
                         .requestMatchers("/favoriten/**").hasRole("STUDENT")
                         .requestMatchers("/user/**").authenticated()
                         .requestMatchers("/chat/**").authenticated()
+                        .requestMatchers("/share/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .formLogin(form -> form
