@@ -17,6 +17,24 @@ public class EmailService {
         this.mailSender = mailSender;
     }
 
+    public void sendRegisterConfirmation(String userEmail) {
+
+        var mail = new SimpleMailMessage();
+        mail.setFrom("keeplearning.oth@gmail.com");
+        mail.setTo(userEmail);
+        mail.setSubject("Wilkommen bei KeepLearning");
+        mail.setText("""
+                Hallo,
+
+                Deine Registrierung war erfolgreich.
+
+                Viel Spaß beim Lernen und Viel Erfolg!
+                KeepLearning
+                """);
+
+        mailSender.send(mail);
+    }
+
     public void sendBookingConfirmationToStudent(
             String studentEmail,
             String teacherName,

@@ -24,6 +24,8 @@ public class UserService implements UserDetailsService {
     private UserRepository userRepository;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+    @Autowired
+    private EmailService emailService;
 
     
     // returns the saved user object or empty optional with the user already exists
@@ -40,7 +42,10 @@ public class UserService implements UserDetailsService {
             info.Role
         );
 
-        return Optional.of(userRepository.save(user));
+        User newUser = userRepository.save(user);
+        emailService.sendRegisterConfirmation(newUser.getEmail());
+
+        return Optional.of(newUser);
     }
 
     public boolean saveUser(User user) {
